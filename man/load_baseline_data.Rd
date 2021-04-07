@@ -4,7 +4,7 @@
 \alias{load_baseline_data}
 \title{Load baseline}
 \usage{
-load_baseline_data()
+load_baseline_data(species)
 }
 \description{
 Load baseline

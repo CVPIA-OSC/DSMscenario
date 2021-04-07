@@ -1,6 +1,7 @@
 #' Load baseline
 #' @export
-load_baseline_data <- function() {
+load_baseline_data <- function(species) {
+
   # DSMflow variables -----
   freeport_flows <- DSMflow::freeport_flow
   vernalis_flows <- DSMflow::vernalis_flow
@@ -30,10 +31,23 @@ load_baseline_data <- function() {
   migratory_temperature_proportion_over_20 <- DSMtemperature::migratory_temperature_proportion_over_20
 
   # DSMhabitat variables -----
-  spawning_habitat <- DSMhabitat::wr_spawn
-  inchannel_habitat_fry <- DSMhabitat::wr_fry
-  inchannel_habitat_juvenile <- DSMhabitat::wr_juv
-  floodplain_habitat <- DSMhabitat::wr_fp
+  spawning_habitat <- switch(species,
+                             "wr" = DSMhabitat::wr_spawn,
+                             "sr" = DSMhabitat::sr_spawn,
+                             "fr" = DSMhabitat::fr_spawn)
+  inchannel_habitat_fry <- switch(species,
+                                  "wr" = DSMhabitat::wr_fry,
+                                  "sr" = DSMhabitat::sr_fry,
+                                  "fr" = DSMhabitat::fr_fry)
+  inchannel_habitat_juvenile <- switch(species,
+                                       "wr" = DSMhabitat::wr_juv,
+                                       "sr" = DSMhabitat::sr_juv,
+                                       "fr" = DSMhabitat::fr_juv)
+  floodplain_habitat <- switch(species,
+                               "wr" = DSMhabitat::wr_fp,
+                               "sr" = DSMhabitat::sr_fp,
+                               "fr" = DSMhabitat::fr_fp)
+
   weeks_flooded <- DSMhabitat::weeks_flooded
   delta_habitat <- DSMhabitat::delta_habitat
   sutter_habitat <- DSMhabitat::sutter_habitat
@@ -94,3 +108,29 @@ load_baseline_data <- function() {
     prob_nest_scoured = prob_nest_scoured
   )
 }
+
+
+add_habitat <- function(base, habitat_type, amount) {
+
+  hab_to_modify <- switch(habitat_type,
+    "floodplain" = "floodplain_habitat",
+    "spawning" = "spawning_habitat",
+    "fry" = "inchannel_habitat_fry",
+    "juvenile" = "inchannel_habitat_juvenile"
+  )
+
+  base[[hab_to_modify]] <- base[[hab_to_modify]] + amount
+
+  return(base)
+
+}
+
+
+# ((8093.72*ifelse(chosenTrib==1 & yr<11,2,1))*(min(max(rgamma(1,44.44444,scale=0.02250),0.5),1.5)))
+
+
+
+
+
+
+
