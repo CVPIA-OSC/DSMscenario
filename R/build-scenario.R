@@ -102,15 +102,15 @@ create_scenario <- function(scenario_df, species = c('fr', 'wr', 'sr')) {
                  } else if (action == 3) {
                    # action == 3 - add inchannel rearing habitat
                    scenario_fry <- add_habitat(scenario_fry, watershed,
-                                               amount = add_noise(ac2*units_of_effort),
+                                               amount = add_noise(two_acres*units_of_effort),
                                                years = as.character(start_year:end_year))
                    scenario_juv <- add_habitat(scenario_juv, watershed,
-                                               amount = add_noise(ac2*units_of_effort),
+                                               amount = add_noise(two_acres*units_of_effort),
                                                years = as.character(start_year:end_year))
                  } else if (action == 4) {
                    # action == 4 - add floodplain rearing habitat
                    scenario_fp <- add_habitat(scenario_fp, watershed,
-                                              amount = add_noise(ac2*units_of_effort),
+                                              amount = add_noise(two_acres*units_of_effort),
                                               years = as.character(start_year:end_year))
                  } else if (action == 5) {
                    # action == 5 - increase survival by 5%
