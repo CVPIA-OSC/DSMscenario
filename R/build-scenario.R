@@ -1,134 +1,134 @@
-#' Load baseline
+#' Add habitat
+#' @param watershed watershed name or number 1:31
+#' @param amount square meters
+#' @param years vector of characters 1980-1999
 #' @export
-load_baseline_data <- function(species) {
+add_habitat <- function(base, watershed, amount, years) {
+  if (is.numeric(years)) {
+    years <- as.character(years)
+  }
 
-  # DSMflow variables -----
-  freeport_flows <- DSMflow::freeport_flow
-  vernalis_flows <- DSMflow::vernalis_flow
-  stockton_flows <- DSMflow::stockton_flow
-  CVP_exports <- DSMflow::cvp_exports
-  SWP_exports <- DSMflow::swp_exports
-  proportion_diverted <- DSMflow::proportion_diverted
-  total_diverted <- DSMflow::total_diverted
-  delta_proportion_diverted <- DSMflow::delta_proportion_diverted
-  delta_total_diverted <- DSMflow::delta_total_diverted
-  prop_pulse_flows <- DSMflow::proportion_pulse_flows
-  prop_flow_natal <- DSMflow::proportion_flow_natal
-  upper_sacramento_flows <- DSMflow::upper_sacramento_flows
-  delta_inflow <- DSMflow::delta_inflow
-  cc_gates_days_closed <- DSMflow::delta_cross_channel_closed["count", ]
-  cc_gates_prop_days_closed <- DSMflow::delta_cross_channel_closed["proportion", ]
-  proportion_flow_bypass <- DSMflow::proportion_flow_bypasses
-  gates_overtopped <- DSMflow::gates_overtopped
-
-  # DSMtemperature variables -----
-  vernalis_temps <- DSMtemperature::vernalis_temperature
-  prisoners_point_temps <- DSMtemperature::prisoners_point_temperature
-  degree_days <- DSMtemperature::degree_days
-  # mean_egg_temp_effect <- DSMtemperature::egg_temperature_effect
-  avg_temp <- DSMtemperature::stream_temperature
-  avg_temp_delta <- DSMtemperature::delta_temperature
-  migratory_temperature_proportion_over_20 <- DSMtemperature::migratory_temperature_proportion_over_20
-
-  # DSMhabitat variables -----
-  spawning_habitat <- switch(species,
-                             "wr" = DSMhabitat::wr_spawn,
-                             "sr" = DSMhabitat::sr_spawn,
-                             "fr" = DSMhabitat::fr_spawn)
-  inchannel_habitat_fry <- switch(species,
-                                  "wr" = DSMhabitat::wr_fry,
-                                  "sr" = DSMhabitat::sr_fry,
-                                  "fr" = DSMhabitat::fr_fry)
-  inchannel_habitat_juvenile <- switch(species,
-                                       "wr" = DSMhabitat::wr_juv,
-                                       "sr" = DSMhabitat::sr_juv,
-                                       "fr" = DSMhabitat::fr_juv)
-  floodplain_habitat <- switch(species,
-                               "wr" = DSMhabitat::wr_fp,
-                               "sr" = DSMhabitat::sr_fp,
-                               "fr" = DSMhabitat::fr_fp)
-
-  weeks_flooded <- DSMhabitat::weeks_flooded
-  delta_habitat <- DSMhabitat::delta_habitat
-  sutter_habitat <- DSMhabitat::sutter_habitat
-  yolo_habitat <- DSMhabitat::yolo_habitat
-  tisdale_bypass_watershed <- DSMhabitat::tisdale_bypass_watershed
-  yolo_bypass_watershed <- DSMhabitat::yolo_bypass_watershed
-  south_delta_routed_watersheds <- DSMhabitat::south_delta_routed_watersheds
-  prop_high_predation <- DSMhabitat::prop_high_predation
-  contact_points <- DSMhabitat::contact_points
-  delta_contact_points <- DSMhabitat::delta_contact_points
-  delta_prop_high_predation <- DSMhabitat::delta_prop_high_predation
-  prob_strand_early <- DSMhabitat::prob_strand_early
-  prob_strand_late <- DSMhabitat::prob_strand_late
-  prob_nest_scoured <- DSMhabitat::prob_nest_scoured
-
-  list(
-    freeport_flows = freeport_flows,
-    vernalis_flows = vernalis_flows,
-    stockton_flows = stockton_flows,
-    CVP_exports = CVP_exports,
-    SWP_exports = SWP_exports,
-    proportion_diverted = proportion_diverted,
-    total_diverted = total_diverted,
-    delta_proportion_diverted = delta_proportion_diverted,
-    delta_total_diverted = delta_total_diverted,
-    prop_pulse_flows = prop_pulse_flows,
-    prop_flow_natal = prop_flow_natal,
-    upper_sacramento_flows = upper_sacramento_flows,
-    delta_inflow = delta_inflow,
-    cc_gates_days_closed = cc_gates_days_closed,
-    cc_gates_prop_days_closed = cc_gates_prop_days_closed,
-    proportion_flow_bypass = proportion_flow_bypass,
-    gates_overtopped = gates_overtopped,
-    vernalis_temps = vernalis_temps,
-    prisoners_point_temps = prisoners_point_temps,
-    degree_days = degree_days,
-    #   mean_egg_temp_effect = mean_egg_temp_effect,
-    avg_temp = avg_temp,
-    avg_temp_delta = avg_temp_delta,
-    migratory_temperature_proportion_over_20 = migratory_temperature_proportion_over_20,
-    spawning_habitat = spawning_habitat,
-    inchannel_habitat_fry = inchannel_habitat_fry,
-    inchannel_habitat_juvenile = inchannel_habitat_juvenile,
-    floodplain_habitat = floodplain_habitat,
-    weeks_flooded = weeks_flooded,
-    delta_habitat = delta_habitat,
-    sutter_habitat = sutter_habitat,
-    yolo_habitat = yolo_habitat,
-    tisdale_bypass_watershed = tisdale_bypass_watershed,
-    yolo_bypass_watershed = yolo_bypass_watershed,
-    south_delta_routed_watersheds = south_delta_routed_watersheds,
-    prop_high_predation = prop_high_predation,
-    contact_points = contact_points,
-    delta_contact_points = delta_contact_points,
-    delta_prop_high_predation = delta_prop_high_predation,
-    prob_strand_early = prob_strand_early,
-    prob_strand_late = prob_strand_late,
-    prob_nest_scoured = prob_nest_scoured
-  )
-}
-
-
-add_habitat <- function(base, habitat_type, amount) {
-
-  hab_to_modify <- switch(habitat_type,
-    "floodplain" = "floodplain_habitat",
-    "spawning" = "spawning_habitat",
-    "fry" = "inchannel_habitat_fry",
-    "juvenile" = "inchannel_habitat_juvenile"
-  )
-
-  base[[hab_to_modify]] <- base[[hab_to_modify]] + amount
+  base[watershed, , years] <- base[watershed, , years] + amount
+  # compare to max, pmin with maxRearHab$max_suit_sqm[watershed, ]
 
   return(base)
 
 }
 
+#' Increase Survival
+#' @param watershed watershed name or number 1:31
+#' @param amount 1 unit of effort is a 5\% increase, default 1 unit is 1.05
+#' @param years vector of characters 1980-1999
+#' @export
+increase_survial_scalar <- function(base, watershed, amount = 1.05, years) {
+  if (is.numeric(years)) {
+    years <- as.character(years)
+  }
 
-# ((8093.72*ifelse(chosenTrib==1 & yr<11,2,1))*(min(max(rgamma(1,44.44444,scale=0.02250),0.5),1.5)))
+  base[watershed, years] <- amount
+  # in model - make sure scalar multiplication is not greater than 1 survival
 
+  return(base)
 
+}
+
+#' Add Noise to Habitat Amount
+#' @param sqm square meter of base habitat amount
+#' @noRd
+add_noise <- function(sqm) {sqm * min(max(rgamma(1,44.44444,scale=0.02250),0.5),1.5)}
+
+#' Create scenario
+#' @param scenario_df a dataframe containing scenario information, see details below
+#' @param species either "fr", "wr", "sr" for fall run, winter run, or spring run respectively
+#' @details
+#' The \code{scenario_df} is a dataframe with each row representing a scenario action.
+#' The dataframe must contain the following columns:
+#' \itemize{
+#'   \item "watershed" - The name or index for a watershed, ex. "Upper Sacramento River" or 1
+#'   \item "action" - The action taken represented by the code 1 - 5, ex: 3
+#'   \item "start_year"- The simulation year the action begins
+#'   \item "end_year" - The simulation year the action ends
+#'   \item "units_of_effort" - number of action units taken, ex: .5 or 1
+#' }
+#' @section Actions and Units of Effort:
+#' \itemize{
+#'   \item Action 1: Do nothing
+#'   \item Action 2: Add 1 acre of spawning habitat
+#'   \item Action 3: Add 2 acres of inchannel rearing habitat
+#'   \item Action 4: Add 2 acres of floodplain rearing habitat
+#'   \item Action 5: Increase rearing survival by 5%
+#'
+#' }
+#' @examples
+#' scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
+#'                         "American River", "Feather River", "Lower-mid Sacramento River",
+#'                         "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
+#'           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
+#'           start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
+#'           end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
+#'           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+#'
+#' create_scenario(scenario_df, species = "fr")
+#' @export
+create_scenario <- function(scenario_df, species = c('fr', 'wr', 'sr')) {
+
+  species <- match.arg(species)
+
+  one_acre <- 4046.86
+  two_acres <- 8093.72
+
+  model_inputs <- switch(species,
+         "fr" = fallRunDSM::load_baseline_data(),
+         "wr" = winterRunDSM::load_baseline_data(),
+         "sr" = springRunDSM::load_baseline_data())
+
+  scenario_spawn <- model_inputs$spawning_habitat
+  scenario_fry <- model_inputs$inchannel_habitat_fry
+  scenario_juv <- model_inputs$inchannel_habitat_juvenile
+  scenario_fp <- model_inputs$floodplain_habitat
+  # weeks_flooded <- DSMhabitat::weeks_flooded TODO how to adjust
+
+  scenario_survival_scalar <- matrix(1, nrow = 31, ncol = 20,
+                                     dimnames = list(DSMscenario::watershed_labels, 1980:1999))
+
+  purrr::pwalk(scenario_df,
+               function(watershed, action, start_year, end_year, units_of_effort, ...) {
+                 # action == 1 - do nothing
+                 if (action == 2) {
+                   # action == 2 - add spawning habitat
+                   scenario_spawn <- add_habitat(scenario_spawn, watershed,
+                                                 amount = add_noise(one_acre*units_of_effort),
+                                                 years = as.character(start_year:end_year))
+                 } else if (action == 3) {
+                   # action == 3 - add inchannel rearing habitat
+                   scenario_fry <- add_habitat(scenario_fry, watershed,
+                                               amount = add_noise(ac2*units_of_effort),
+                                               years = as.character(start_year:end_year))
+                   scenario_juv <- add_habitat(scenario_juv, watershed,
+                                               amount = add_noise(ac2*units_of_effort),
+                                               years = as.character(start_year:end_year))
+                 } else if (action == 4) {
+                   # action == 4 - add floodplain rearing habitat
+                   scenario_fp <- add_habitat(scenario_fp, watershed,
+                                              amount = add_noise(ac2*units_of_effort),
+                                              years = as.character(start_year:end_year))
+                 } else if (action == 5) {
+                   # action == 5 - increase survival by 5%
+                   scenario_survival_scalar <- increase_survial_scalar(scenario_survival_scalar, watershed,
+                                                                       years = as.character(start_year:end_year))
+                 }
+
+               })
+
+  model_inputs$spawning_habitat <- scenario_spawn
+  model_inputs$inchannel_habitat_fry <- scenario_fry
+  model_inputs$inchannel_habitat_juvenile <- scenario_juv
+  model_inputs$floodplain_habitat <- scenario_fp
+  model_inputs$survival_scalar <- scenario_survival_scalar
+
+  return(model_inputs)
+
+}
 
 
 
