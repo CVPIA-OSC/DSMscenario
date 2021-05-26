@@ -60,13 +60,13 @@ test_that("create scenario works", {
 
   expect_equal(
     fr_inputs$inchannel_habitat_fry["Clear Creek", 1, "1990"],
-      DSMhabitat::fr_fry["Clear Creek", 1, "1990"]
+    DSMhabitat::fr_fry["Clear Creek", 1, "1990"]
   )
 
   expect_false(
     fr_inputs$inchannel_habitat_fry["Clear Creek", 1, "1980"] ==
       DSMhabitat::fr_fry["Clear Creek", 1, "1980"]
-    )
+  )
 
   expect_lte(
     fr_inputs$inchannel_habitat_fry["Clear Creek", 1, "1980"] -
@@ -92,5 +92,6 @@ test_that('piping with add_habitat works', {
     DSMhabitat::fr_fry["Clear Creek", , as.character(1990:1999)] + (two_acres*2)
 
   expect_equal(modified, fr_fry)
+
 
 })
