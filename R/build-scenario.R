@@ -101,27 +101,32 @@ create_scenario <- function(scenario_df, species = c('fr', 'wr', 'sr')) {
                                                  years = as.character(start_year:end_year))
                  } else if (action == 3) {
                    # action == 3 - add inchannel rearing habitat
+                   print(scenario_fry[watershed, , as.character(start_year)])
+                   print('---')
                    scenario_fry <- add_habitat(scenario_fry, watershed,
                                                amount = add_noise(two_acres*units_of_effort),
-                                               years = as.character(start_year:end_year))
+                                               years = start_year:end_year)
+                   print(scenario_fry[watershed, , as.character(start_year)])
+                   print('---')
                    scenario_juv <- add_habitat(scenario_juv, watershed,
                                                amount = add_noise(two_acres*units_of_effort),
-                                               years = as.character(start_year:end_year))
+                                               years = start_year:end_year)
                  } else if (action == 4) {
                    # action == 4 - add floodplain rearing habitat
                    scenario_fp <- add_habitat(scenario_fp, watershed,
                                               amount = add_noise(two_acres*units_of_effort),
-                                              years = as.character(start_year:end_year))
+                                              years = start_year:end_year)
                  } else if (action == 5) {
                    # action == 5 - increase survival by 5%
                    scenario_survival_scalar <- increase_survial_scalar(scenario_survival_scalar, watershed,
-                                                                       years = as.character(start_year:end_year))
+                                                                       years = start_year:end_year)
                  }
 
                })
 
   model_inputs$spawning_habitat <- scenario_spawn
   model_inputs$inchannel_habitat_fry <- scenario_fry
+  print(model_inputs$inchannel_habitat_fry[scenario_df$watershed, , as.character(scenario_df$start_year)])
   model_inputs$inchannel_habitat_juvenile <- scenario_juv
   model_inputs$floodplain_habitat <- scenario_fp
   model_inputs$survival_scalar <- scenario_survival_scalar
