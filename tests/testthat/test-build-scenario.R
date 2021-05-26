@@ -62,6 +62,7 @@ test_that("create scenario works", {
     fr_inputs$inchannel_habitat_fry["Clear Creek", 1, "1990"],
       DSMhabitat::fr_fry["Clear Creek", 1, "1990"]
   )
+
   expect_false(
     fr_inputs$inchannel_habitat_fry["Clear Creek", 1, "1980"] ==
       DSMhabitat::fr_fry["Clear Creek", 1, "1980"]
@@ -76,4 +77,20 @@ test_that("create scenario works", {
     fr_inputs$inchannel_habitat_fry["Clear Creek", 1, "1980"] -
       (DSMhabitat::fr_fry["Clear Creek", 1, "1980"] + two_acres),
     two_acres * -0.5)
+
+})
+
+test_that('piping with add_habitat works', {
+  modified <- DSMhabitat::fr_fry %>%
+    add_habitat(watershed = "Clear Creek", amount = two_acres, years = 1980:1989) %>%
+    add_habitat(watershed = "Clear Creek", amount = two_acres*2, years = 1990:1999)
+
+  fr_fry <- DSMhabitat::fr_fry
+  fr_fry["Clear Creek", , as.character(1980:1989)] <-
+    DSMhabitat::fr_fry["Clear Creek", , as.character(1980:1989)] + two_acres
+  fr_fry["Clear Creek", , as.character(1990:1999)] <-
+    DSMhabitat::fr_fry["Clear Creek", , as.character(1990:1999)] + (two_acres*2)
+
+  expect_equal(modified, fr_fry)
+
 })
