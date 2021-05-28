@@ -32,10 +32,11 @@ increase_survial_scalar <- function(base, watershed, amount = 1.05, years) {
 
 }
 
-#' Add Noise to Habitat Amount
+#' Add Partial Contrallability to Habitat Amount
+#' Randomly increase or decrease amount of habitat created
 #' @param sqm square meter of base habitat amount
 #' @noRd
-add_noise <- function(sqm) {sqm * min(max(rgamma(1,44.44444,scale=0.02250),0.5),1.5)}
+add_parital_controllability <- function(sqm) {sqm * min(max(rgamma(1,44.44444,scale=0.02250),0.5),1.5)}
 
 #' Create scenario
 #' @param scenario_df a dataframe containing scenario information, see details below
@@ -91,26 +92,28 @@ create_scenario <- function(scenario_df, species = c('fr', 'wr', 'sr')) {
   scenario_survival_scalar <- matrix(1, nrow = 31, ncol = 20,
                                      dimnames = list(DSMscenario::watershed_labels, 1980:1999))
 
+  # if spawning habitat is not added, remove some
+
   purrr::pwalk(scenario_df,
                function(watershed, action, start_year, end_year, units_of_effort, ...) {
                  # action == 1 - do nothing
                  if (action == 2) {
                    # action == 2 - add spawning habitat
                    scenario_spawn <<- add_habitat(scenario_spawn, watershed,
-                                                 amount = add_noise(one_acre*units_of_effort),
+                                                 amount = add_parital_controllability(one_acre*units_of_effort),
                                                  years = as.character(start_year:end_year))
                  } else if (action == 3) {
                    # action == 3 - add inchannel rearing habitat
                    scenario_fry <<- add_habitat(scenario_fry, watershed,
-                                               amount = add_noise(two_acres*units_of_effort),
+                                               amount = add_parital_controllability(two_acres*units_of_effort),
                                                years = start_year:end_year)
                    scenario_juv <<- add_habitat(scenario_juv, watershed,
-                                               amount = add_noise(two_acres*units_of_effort),
+                                               amount = add_parital_controllability(two_acres*units_of_effort),
                                                years = start_year:end_year)
                  } else if (action == 4) {
                    # action == 4 - add floodplain rearing habitat
                    scenario_fp <<- add_habitat(scenario_fp, watershed,
-                                              amount = add_noise(two_acres*units_of_effort),
+                                              amount = add_parital_controllability(two_acres*units_of_effort),
                                               years = start_year:end_year)
                  } else if (action == 5) {
                    # action == 5 - increase survival by 5%
