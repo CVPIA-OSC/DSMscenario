@@ -46,8 +46,8 @@ test_that("add habitat works", {
 
 })
 
-test_that("add noise works", {
-  amount <- add_noise(two_acres)
+test_that("add partial contrallability works", {
+  amount <- add_parital_controllability(two_acres)
   expect_lte(amount, 1.5*two_acres)
   expect_gte(amount, 0.5*two_acres)
 })
