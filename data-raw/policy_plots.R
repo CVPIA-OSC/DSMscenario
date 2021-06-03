@@ -1,5 +1,6 @@
 library(tidyverse)
 library(stringr)
+library(fallRunDSM)
 
 groupings <- read_csv('data-raw/Grouping.csv')
 
@@ -42,4 +43,46 @@ size_small_mean_surv <- purrr::map_dfc(1:20, function(year) {
 
 # female spawners - number of redds rolling mean last 5 years
 # spawn habitat - min annual amount within months 10-12
+min_spawning_habitat <- map_df(1:31, function(watershed) {
+  min_spawn_hab <- apply(t(spawning_habitat[watershed, 10:12, ]), 1, min)
+  tibble(
+    watershed = watershed_attributes$watershed[watershed],
+    year = names(min_spawn_hab),
+    spawn_hab = as.numeric(min_spawn_hab)
+  )
+}) %>%
+  arrange(year)
+
 # rearing habitat - annual mean habitat (fry months 1-3, juv months 4-8)
+fry_mean_habitat <- map_df(1:20, function(year) {
+  map_df(1:3, function(m) {
+    hab <- get_habitat(year = year, month = m)$inchannel
+    tibble(watershed = names(hab),
+           habitat = as.numeric(hab))
+  }) %>%
+    group_by(watershed) %>%
+    summarise(
+      mean_habitat = mean(habitat)
+    ) %>% ungroup() %>%
+    mutate(year = year + 1978)
+})
+# if wantting to add order
+# %>%
+#   left_join(select(watershed_attributes, watershed, order)) %>%
+#   arrange(order) %>%
+#   select(-order)
+
+juv_mean_habitat <- map_df(1:20, function(year) {
+  map_df(4:8, function(m) {
+    hab <- get_habitat(year = year, month = m)$inchannel
+    tibble(watershed = names(hab),
+           habitat = as.numeric(hab))
+  }) %>%
+    group_by(watershed) %>%
+    summarise(
+      mean_habitat = mean(habitat)
+    ) %>% ungroup() %>%
+    mutate(year = year + 1978)
+})
+
+
