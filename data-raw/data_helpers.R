@@ -9,9 +9,6 @@ watershed_labels <- c("Upper Sacramento River", "Antelope Creek", "Battle Creek"
                       "Tuolumne River", "San Joaquin River")
 usethis::use_data(watershed_labels)
 
-species <- list(FALL_RUN = "fr", WINTER_RUN = "wr", SPRING_RUN = "sr")
-usethis::use_data(species)
-# .98 - (1 - .98)
 max_decay_rates <- read_csv('data-raw/Grouping.csv') %>%
   mutate(
     spawn_decay_rate_max = case_when(
