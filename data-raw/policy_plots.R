@@ -42,6 +42,9 @@ size_small_mean_surv <- purrr::map_dfc(1:20, function(year) {
   gather(year, mean_survival, -watershed)
 
 # female spawners - number of redds rolling mean last 5 years
+# at each year redds
+
+
 # spawn habitat - min annual amount within months 10-12
 min_spawning_habitat <- map_df(1:31, function(watershed) {
   min_spawn_hab <- apply(t(spawning_habitat[watershed, 10:12, ]), 1, min)
