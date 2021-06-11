@@ -1,0 +1,190 @@
+---
+title: "Theoretical Max Habitat Areas"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Theoretical Max Habitat Areas}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+```
+
+```{r setup}
+library(DSMscenario)
+library(tidyverse)
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+```
+
+## Total Wetted Area Estimation
+
+We used 1 meter resolution 4 band (R, G, B, N) imagery from the National Agriculture Imagery Program [(NAIP)](fsa.usda.gov/programs-and-services/aerial-photography/imagery-programs/naip-imagery/) to conduct  a Normalized Difference Water Index [(NDWI)](https://en.wikipedia.org/wiki/Normalized_difference_water_index) based analysis to identify
+total wetted area for the 31 tributaries included in the SIT chinook life cycle models.
+The analysis was performed using the [Google Earth Engine IDE](https://code.earthengine.google.com/).
+
+We used all the available NAIP imagery for the years 2009-2016 and for each image calculated the NDWI as:
+$${NDWI}=\frac{(Xgreen - Xnir)}{(Xgreen + Xnir)}$$
+
+We then reduced the multidimensional array of NDWI rasters by selecting the maximum
+NDWI at each pixel. We created a buffer of the fall run rearing extents with an estimated channel width to clip the max NDWI raster. A binary filter was applied to the clipped raster for NDWI values greater than a threshold to classify each pixel as water or not water. These
+water pixels were multiplied by the pixel area and then all summed to estimate the total
+wetted area of the stream.
+
+The total wetted area values for each watershed were recorded in this file:  `data-raw/earth_engine_total_channel_area_estimates.csv`
+
+The extents were mapped through expert outreach can be viewed on [this interactive map](https://cvpia-osc.github.io/DSMhabitat/articles/habitat-extents-map.html) and are available for download [here](https://github.com/CVPIA-OSC/DSMhabitat/tree/main/data-raw/rearing_spatial_data/salmonid_habitat_extents)
+
+Example analysis JavaScript code below:
+```{javascript eval=F}
+var naip: Imagecollection "NAIP: National Agriculture Imagery Program"
+var habExt = ee.FeatureCollection('users/fall_run_hab_extent');
+
+// Lower-mid Sacramento River 
+var lowermid_sacRiver = ee.Feature(habExt.filterMetadata('River', 'equals', 'Lower-mid Sacramento River').first());
+
+// define buffer
+var lowermid_sacRiverbuffer= lowermid_sacRiver.buffer(70);
+
+// 2009-2016 NAIP imagery covering Lower Sacramento River
+var lowermid_sac = naip
+  .filterBounds(lowermid_sacRiver.geometry())
+  .filterDate('2009-01-01','2016-12-31');
+
+// calculate ndwi for each image
+var ndwi = lowermid_sac.map(function(img) {
+    return img.normalizedDifference(['G', 'N']).rename('ndwi');
+});
+
+var maxNDWI = ndwi
+  .reduce(ee.Reducer.max());
+
+var mask = maxNDWI.mask(maxNDWI.gt(.7));
+
+// simple water classifier
+var water = maxNDWI
+  .gt(.7)
+  .multiply(ee.Image.pixelArea())
+  .rename('waterAreaSqMeters')
+  .reduceRegion({
+    reducer: ee.Reducer.sum(), 
+    geometry: lowermid_sacRiverbuffer.geometry(), 
+    scale: 1,
+    maxPixels: 1e9
+  });
+  
+print('total water area in square meters:', water);
+```
+
+```{r }
+wetted_area <- read_csv('data-raw/earth_engine_total_channel_area_estimates.csv')
+
+length_ratios <- DSMhabitat::watershed_lengths %>% 
+  filter(species == 'fr') %>% 
+  mutate(meters = 0.3048 * feet) %>%
+  select(watershed, lifestage, meters) %>%
+  spread(lifestage, meters) %>% 
+  transmute(watershed, sr_ratio = spawning/rearing)
+
+max_area_fr <- wetted_area %>% 
+  left_join(length_ratios) %>% 
+  transmute(watershed, 
+            rearing_sqm = .5 *
+              DSMhabitat::acres_to_square_meters(FR_channel_area_of_length_modeled_acres), 
+            spawning_sqm = rearing_sqm * sr_ratio * .6, 
+            species = "fr")
+
+# to calculate other species take fr rearing and scale using rear length ratio between fr and target species
+```
+
+## theoretical is bigger than estimated habitat sometimes
+No watershed specific instream spawning or rearing habitat data was available for [Bear Creek](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/bear_creek.html), ,  [Paynes Creek](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/paynes_creek.html) [Regional Approximation Method](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/Regional_Approximation.html)
+
+## Rearing
+[Cottonwood Creek](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/cottonwood_creek.html), [Cow Creek](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/cow_creek.html), [Mokelumne River](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/mokelumne_river.html), and [Merced River](http://cvpia-habitat-docs-markdown.s3-website-us-west-2.amazonaws.com/watershed/merced_river.html)
+
+## Spawning
+
+```{r eval=F}
+create_max_area <- function(max_area_df, specie, life_stage) {
+
+  max_area_df %>%
+    filter(species == specie, lifestage == life_stage) %>%
+    select(watershed, max_suit_sqm) %>%
+    bind_rows(
+      tibble(watershed = DSMscenario::watershed_labels,
+             max_suit_sqm = 0)) %>%
+    filter(!(watershed %in% c('North Delta', 'South Delta'))) %>%
+    group_by(watershed) %>%
+    summarise(sqm = sum(max_suit_sqm)) %>%
+    ungroup() %>%
+    mutate(watershed = factor(watershed, levels = DSMscenario::watershed_labels),
+           sqm = ifelse(sqm == 0, NA, sqm)) %>%
+    arrange(watershed) %>%
+    pull(sqm) %>%
+    set_names(DSMscenario::watershed_labels)
+
+}
+```
+
+```{r eval=F}
+max_existing_habitat_fr <- purrr::map_dbl(1:31, 
+                                       ~max(
+                                         DSMhabitat::square_meters_to_acres(
+                                           DSMhabitat::fr_fry[.,,])))
+
+max_added_habitat <- (2*5*20)
+max_existing_habitat + max_added_habitat
+
+mm <- DSMhabitat::square_meters_to_acres(create_max_area(max_area_df, specie = "fr", life_stage = "rearing"))
+
+DSMscenario::watershed_labels[mm < max_existing_habitat]
+
+mm - max_existing_habitat
+
+```
+
+Cache spawning maxium areas for each species.
+```{r eval=F}
+max_spawn_area <- list(
+  "fall" = create_max_area(max_area_df, specie = "fr", life_stage = "spawning"),
+  "spring" = create_max_area(max_area_df, specie = "sr", life_stage = "spawning"),
+  "steelhead" = create_max_area(max_area_df, specie = "st", life_stage = "spawning")
+)
+
+max_spawn_area$winter <- replace(max_rear_area$fall, !(DSMscenario::watershed_labels %in%
+                                                         c("Upper Sacramento River",
+                                                           "Battle Creek")), NA)
+
+# revise with updated lengths
+max_spawn_area$latefall <- replace(max_rear_area$fall, !(DSMscenario::watershed_labels %in%
+                                                          c("Upper Sacramento River",
+                                                            "Battle Creek", "Clear Creek")), NA)
+```
+
+Cache rearing maxium areas for each species.
+```{r eval=F}
+max_rear_area <- list(
+  "fall" = create_max_area(max_area_df, specie = "fr", life_stage = "rearing"),
+  "spring" = create_max_area(max_area_df, specie = "sr", life_stage = "rearing"),
+  "steelhead" = create_max_area(max_area_df, specie = "st", life_stage = "rearing")
+)
+
+max_rear_area$winter <- replace(max_rear_area$fall, !(DSMscenario::watershed_labels %in%
+                                c("Upper Sacramento River", "Upper-mid Sacramento River",
+                                  "Lower-mid Sacramento River", "Lower Sacramento River",
+                                  "Battle Creek")), NA)
+
+# revise with updated lengths
+max_rear_area$latefall <- replace(max_rear_area$fall, !(DSMscenario::watershed_labels %in%
+                                                        c("Upper Sacramento River",
+                                                          "Upper-mid Sacramento River",
+                                                          "Lower-mid Sacramento River",
+                                                          "Lower Sacramento River",
+                                                          "Battle Creek", "Clear Creek")), NA)
+usethis::use_data(max_rear_area, overwrite = TRUE)
+```
