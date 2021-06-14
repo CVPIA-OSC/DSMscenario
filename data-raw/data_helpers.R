@@ -35,3 +35,6 @@ rear_decay_rate <- max_decay_rates$rear_decay_rate_max
 names(rear_decay_rate) <- watershed_labels
 usethis::use_data(spawn_decay_rate, overwrite = TRUE)
 usethis::use_data(rear_decay_rate, overwrite = TRUE)
+
+species <- list(FALL_RUN = "fr", WINTER_RUN = "wr", SPRING_RUN = "sr", STEELHEAD = "st", LATE_FALL_RUN = "lfr")
+usethis::use_data(species)

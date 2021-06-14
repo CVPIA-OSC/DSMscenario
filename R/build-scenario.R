@@ -5,7 +5,7 @@
 #' @param amount
 #' @param decay
 #' @export
-modify_habitat <- function(habitat, action_units, amount, decay, years = 21) {
+modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 21, theoretical_max = NULL) {
 
   amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
   # for each month within a year, add or degrade same volume of habitat
@@ -19,6 +19,11 @@ modify_habitat <- function(habitat, action_units, amount, decay, years = 21) {
       decay_amount <- replace(apply_decay, which(apply_decay == 0), 1)
       habitat[ , i, ] <- habitat[ , i, ] * decay_amount
     }
+  }
+
+  # Do not let habitat amount exceed theoretical habitat maximum for spawn and inchannel rearing
+  if (!is.null(theoretical_max)) {
+    habitat <- pmin(habitat, theoretical_max)
   }
 
   return(habitat)
@@ -102,6 +107,7 @@ get_action_matrices <- function(scenario_df) {
 #' Load Scenario
 #' @param scenario_df a dataframe containing scenario information, see details below
 #' @param habitat_inputs
+#' @param species
 #' @details
 #' The \code{scenario_df} is a dataframe with each row representing a scenario action.
 #' The dataframe must contain the following columns:
@@ -132,8 +138,23 @@ get_action_matrices <- function(scenario_df) {
 #'
 #' load_scenario(scenario_df, )
 #' @export
-load_scenario <- function(scenario_df, habitat_inputs) {
+load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr")) {
 
+  species <- match.arg(species)
+
+  spawn_theoretical_habitat_max <- switch(species,
+                                          "fr" = max_spawn_area$fall,
+                                          "wr" = max_spawn_area$winter,
+                                          "sr" = max_spawn_area$spring,
+                                          "st" = max_spawn_area$steelhead,
+                                          "lfr" = max_spawn_area$latefall)
+
+  rear_theoretical_habitat_max <- switch(species,
+                                         "fr" = max_rear_area$fall,
+                                         "wr" = max_rear_area$winter,
+                                         "sr" = max_rear_area$spring,
+                                         "st" = max_rear_area$steelhead,
+                                         "lfr" = max_rear_area$latefall)
   one_acre <- 4046.86
   two_acres <- 8093.72
   three_acres <- 12140.59
@@ -145,17 +166,20 @@ load_scenario <- function(scenario_df, habitat_inputs) {
                                      action_units = actions$spawn,
                                      amount = one_acre,
                                      decay = decay$spawn,
-                                     years = 22)
+                                     years = 22,
+                                     theoretical_max = spawn_theoretical_habitat_max)
 
   inchannel_habitat_fry <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_fry,
                                           action_units = actions$inchannel,
                                           amount = two_acres,
-                                          decay = decay$rear)
+                                          decay = decay$rear,
+                                          theoretical_max = rear_theoretical_habitat_max)
 
   inchannel_habitat_juvenile <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_juvenile,
                                                action_units = actions$inchannel,
                                                amount = two_acres,
-                                               decay = decay$rear)
+                                               decay = decay$rear,
+                                               theoretical_max = rear_theoretical_habitat_max)
 
   floodplain_habitat <- modify_habitat(habitat = habitat_inputs$floodplain_habitat,
                                        action_units = actions$floodplain,
