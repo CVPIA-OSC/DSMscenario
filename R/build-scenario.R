@@ -37,18 +37,18 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
   species <- match.arg(species)
 
   spawn_theoretical_habitat_max <- switch(species,
-                                          "fr" = DSMscenario::max_spawn_area$fall,
-                                          "wr" = DSMscenario::max_spawn_area$winter,
-                                          "sr" = DSMscenario::max_spawn_area$spring,
-                                          "st" = DSMscenario::max_spawn_area$steelhead,
-                                          "lfr" = DSMscenario::max_spawn_area$latefall)
+                                          "fr" = DSMscenario::max_spawn_area$FALL,
+                                          "wr" = DSMscenario::max_spawn_area$WINTER,
+                                          "sr" = DSMscenario::max_spawn_area$SPRING,
+                                          "st" = DSMscenario::max_spawn_area$STEELHEAD,
+                                          "lfr" = DSMscenario::max_spawn_area$LATEFALL)
 
   rear_theoretical_habitat_max <- switch(species,
-                                         "fr" = DSMscenario::max_rear_area$fall,
-                                         "wr" = DSMscenario::max_rear_area$winter,
-                                         "sr" = DSMscenario::max_rear_area$spring,
-                                         "st" = DSMscenario::max_rear_area$steelhead,
-                                         "lfr" = DSMscenario::max_rear_area$latefall)
+                                         "fr" = DSMscenario::max_rear_area$FALL,
+                                         "wr" = DSMscenario::max_rear_area$WINTER,
+                                         "sr" = DSMscenario::max_rear_area$SPRING,
+                                         "st" = DSMscenario::max_rear_area$STEELHEAD,
+                                         "lfr" = DSMscenario::max_rear_area$LATEFALL)
   one_acre <- 4046.86
   two_acres <- 8093.72
   three_acres <- 12140.59
@@ -104,7 +104,6 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
   # cumulative_decay_matrix <- t(apply(as.numeric(!action_units)*decay, MARGIN = 1, cumprod))
   # decay_amount <- replace(cumulative_decay_matrix, which(cumulative_decay_matrix == 0), 1)
-
   annual_decay <- as.numeric(!action_units)*decay
   for (i in 1:years) {
     annual_decay[i, annual_decay[i,] != 0] <- cumprod(annual_decay[i, annual_decay[i,] != 0])
