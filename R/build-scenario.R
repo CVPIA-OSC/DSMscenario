@@ -1,4 +1,31 @@
-#' Modify habitat
+#' Modify Floodplain Habitat
+#' @param habitat
+#' @param weeks_flooded
+#' @param action_units
+#' @param amount
+modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount) {
+  # partial controllability of building 3 acres
+  amount_matrix <- matrix(add_parital_controllability(amount, 31*21), nrow = 31)
+
+  # acres built times unit of effort with acres built accumulating
+  cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
+
+  for (year in 1:21) {
+    # floodplain built activated 2 out of 3 years
+    if (rbinom(1, 1, 0.67)) {
+      # floodplain active 2 months between 1-4
+      first_active_month <- sample(1:3, 1)
+      active_months <- c(first_active_month, first_active_month + 1)
+      habitat[ , active_months, year] <- habitat[ , active_months, year] + cumulative_amount_matrix[ , year]
+      weeks_flooded[ , active_months, year] <- pmax(weeks_flooded[ , active_months, year], 2)
+    }
+  }
+
+  return(list(habitat = habitat, weeks_flooded = weeks_flooded))
+
+}
+
+#' Modify Inchannel Habitat
 #' @description Change amount of habitat
 #' @param habitat
 #' @param action_units
@@ -8,23 +35,27 @@
 modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 21, theoretical_max = NULL) {
 
   amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
+
+  cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
+  # cumulative_decay_matrix <- t(apply(as.numeric(!action_units)*decay, MARGIN = 1, cumprod))
+  # decay_amount <- replace(cumulative_decay_matrix, which(cumulative_decay_matrix == 0), 1)
+
+  annual_decay <- as.numeric(!action_units)*decay
+  for (i in 1:years) {
+    annual_decay[i, annual_decay[i,] != 0] <- cumprod(annual_decay[i, annual_decay[i,] != 0])
+  }
+  cumulative_decay_matrix <- replace(annual_decay, annual_decay == 0, 1)
+
   # for each month within a year, add or degrade same volume of habitat
   for (i in 1:12) {
     # add habitat by number of units
-    habitat[ , i, ] <- habitat[ , i, ] + (action_units * amount_matrix)
-
+    habitat[ , i, ] <- habitat[ , i, ] + cumulative_amount_matrix
     # degrade habitat if none was added
-    if (!is.null(decay)) {
-      apply_decay <- as.numeric(!action_units)*decay
-      decay_amount <- replace(apply_decay, which(apply_decay == 0), 1)
-      habitat[ , i, ] <- habitat[ , i, ] * decay_amount
-    }
+    habitat[ , i, ] <- habitat[ , i, ] * cumulative_decay_matrix
   }
 
   # Do not let habitat amount exceed theoretical habitat maximum for spawn and inchannel rearing
-  if (!is.null(theoretical_max)) {
-    habitat <- pmin(habitat, theoretical_max)
-  }
+  habitat <- pmin(habitat, theoretical_max)
 
   return(habitat)
 }
@@ -41,6 +72,7 @@ add_parital_controllability <- function(sqm, n = 1) {
 #' Decay Matrices
 #'
 decay_amount_matrices <- function() {
+
   spawn_decay_amount <- t(sapply(1:31, function(index) {
     runif(22, min = DSMscenario::spawn_decay_rate[index], max = 1)
   }))
@@ -48,6 +80,14 @@ decay_amount_matrices <- function() {
   rear_decay_amount <- t(sapply(1:31, function(index) {
     runif(21, min = DSMscenario::rear_decay_rate[index], max = 1)
   }))
+
+  # remove decay from non-regulated tribs and Bypasses and San Joaquin River
+  tribs_with_no_decay <-
+    !DSMscenario::regulated_watersheds |
+    (DSMscenario::watershed_groups > 7)
+
+  spawn_decay_amount[tribs_with_no_decay, ] <- 1
+  rear_decay_amount[tribs_with_no_decay, ] <- 1
 
   return(list(spawn = spawn_decay_amount, rear = rear_decay_amount))
 
@@ -128,13 +168,13 @@ get_action_matrices <- function(scenario_df) {
 #'
 #' }
 #' @examples
-#' scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
-#'                         "American River", "Feather River", "Lower-mid Sacramento River",
-#'                         "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
-#'           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
-#'           start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
-#'           end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
-#'           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+# scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
+#                         "American River", "Feather River", "Lower-mid Sacramento River",
+#                         "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
+#           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
+#           start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
+#           end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
+#           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
 #'
 #' load_scenario(scenario_df, )
 #' @export
@@ -143,18 +183,18 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
   species <- match.arg(species)
 
   spawn_theoretical_habitat_max <- switch(species,
-                                          "fr" = max_spawn_area$fall,
-                                          "wr" = max_spawn_area$winter,
-                                          "sr" = max_spawn_area$spring,
-                                          "st" = max_spawn_area$steelhead,
-                                          "lfr" = max_spawn_area$latefall)
+                                          "fr" = DSMscenario::max_spawn_area$fall,
+                                          "wr" = DSMscenario::max_spawn_area$winter,
+                                          "sr" = DSMscenario::max_spawn_area$spring,
+                                          "st" = DSMscenario::max_spawn_area$steelhead,
+                                          "lfr" = DSMscenario::max_spawn_area$latefall)
 
   rear_theoretical_habitat_max <- switch(species,
-                                         "fr" = max_rear_area$fall,
-                                         "wr" = max_rear_area$winter,
-                                         "sr" = max_rear_area$spring,
-                                         "st" = max_rear_area$steelhead,
-                                         "lfr" = max_rear_area$latefall)
+                                         "fr" = DSMscenario::max_rear_area$fall,
+                                         "wr" = DSMscenario::max_rear_area$winter,
+                                         "sr" = DSMscenario::max_rear_area$spring,
+                                         "st" = DSMscenario::max_rear_area$steelhead,
+                                         "lfr" = DSMscenario::max_rear_area$latefall)
   one_acre <- 4046.86
   two_acres <- 8093.72
   three_acres <- 12140.59
@@ -181,15 +221,19 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
                                                decay = decay$rear,
                                                theoretical_max = rear_theoretical_habitat_max)
 
-  floodplain_habitat <- modify_habitat(habitat = habitat_inputs$floodplain_habitat,
-                                       action_units = actions$floodplain,
-                                       amount = three_acres,
-                                       decay = NULL)
+  floodplain_habitat <- modify_floodplain_habitat(habitat = habitat_inputs$floodplain_habitat,
+                                                  weeks_flooded = habitat_inputs$weeks_flooded,
+                                                  action_units = actions$floodplain,
+                                                  amount = three_acres)
+
+  # how should we modify weeks_flooded when floodplain habitat is added
+  # which months do we add floodplain when added
 
   return(list(spawning_habitat = spawning_habitat,
               inchannel_habitat_fry = inchannel_habitat_fry,
               inchannel_habitat_juvenile = inchannel_habitat_juvenile,
-              floodplain_habitat = floodplain_habitat,
+              floodplain_habitat = floodplain_habitat$habitat,
+              weeks_flooded = floodplain_habitat$weeks_flooded,
               survival_adjustment = actions$survival))
 }
 

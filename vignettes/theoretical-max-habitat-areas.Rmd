@@ -230,19 +230,31 @@ DSMhabitat::set_instream_habitat("Cow Creek", 'fr', 'fry', 200)
 
 Cache spawning and rearing maximum areas for each species.
 ```{r eval=F}
-max_spawn_area <- list(
-  "fall" = max_existing_habitat_fr_spawn * 1.5,
-  "winter" = max_existing_habitat_wr_spawn * 1.5,
-  "spring" = max_existing_habitat_sr_spawn * 1.5,
-  "steelhead" = max_existing_habitat_st_spawn * 1.5)
-
 
 max_rear_area <- list(
-  "fall" = max_existing_habitat_fr_rear * 1.5,
-  "winter" = max_existing_habitat_wr_rear * 1.5,
-  "spring" = max_existing_habitat_sr_rear * 1.5,
-  "steelhead" = max_existing_habitat_st_rear * 1.5)
+  "fall" = fr_rear_max,
+  "winter" = wr_rear_max,
+  "spring" = sr_rear_max,
+  "steelhead" = st_rear_max)
 
+max_spawn_area <- list(
+  "fall" = fr_spawn_max,
+  "winter" = wr_spawn_max,
+  "spring" = sr_spawn_max,
+  "steelhead" = st_spawn_max)
+
+
+# max_rear_area <- list(
+#   "fall" = max_existing_habitat_fr_rear * 1.5,
+#   "winter" = max_existing_habitat_wr_rear * 1.5,
+#   "spring" = max_existing_habitat_sr_rear * 1.5,
+#   "steelhead" = max_existing_habitat_st_rear * 1.5)
+# 
+# max_spawn_area <- list(
+#   "fall" = max_existing_habitat_fr_spawn * 1.5,
+#   "winter" = max_existing_habitat_wr_spawn * 1.5,
+#   "spring" = max_existing_habitat_sr_spawn * 1.5,
+#   "steelhead" = max_existing_habitat_st_spawn * 1.5)
 
 usethis::use_data(max_spawn_area, overwrite = TRUE)
 usethis::use_data(max_rear_area, overwrite = TRUE)
