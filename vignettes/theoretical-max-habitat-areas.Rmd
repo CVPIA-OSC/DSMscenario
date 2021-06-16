@@ -232,16 +232,16 @@ Cache spawning and rearing maximum areas for each species.
 ```{r eval=F}
 
 max_rear_area <- list(
-  "fall" = fr_rear_max,
-  "winter" = wr_rear_max,
-  "spring" = sr_rear_max,
-  "steelhead" = st_rear_max)
+  "FALL" = fr_rear_max,
+  "WINTER" = wr_rear_max,
+  "SPRING" = sr_rear_max,
+  "STEELHEAD" = st_rear_max)
 
 max_spawn_area <- list(
-  "fall" = fr_spawn_max,
-  "winter" = wr_spawn_max,
-  "spring" = sr_spawn_max,
-  "steelhead" = st_spawn_max)
+  "FALL" = fr_spawn_max,
+  "WINTER" = wr_spawn_max,
+  "SPRING" = sr_spawn_max,
+  "STEELHEAD" = st_spawn_max)
 
 
 # max_rear_area <- list(
