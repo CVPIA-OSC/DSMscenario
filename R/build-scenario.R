@@ -102,9 +102,8 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 
   amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
 
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
-  # cumulative_decay_matrix <- t(apply(as.numeric(!action_units)*decay, MARGIN = 1, cumprod))
-  # decay_amount <- replace(cumulative_decay_matrix, which(cumulative_decay_matrix == 0), 1)
   annual_decay <- as.numeric(!action_units)*decay
+
   for (i in 1:years) {
     annual_decay[i, annual_decay[i,] != 0] <- cumprod(annual_decay[i, annual_decay[i,] != 0])
   }
