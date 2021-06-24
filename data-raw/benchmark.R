@@ -2,7 +2,7 @@ library(microbenchmark)
 library(DSMscenario)
 library(fallRunDSM)
 
-model_inputs <- fallRunDSM::load_baseline_data()
+model_inputs <- fallRunDSM::params
 
 habitat_inputs = list(spawning_habitat = model_inputs$spawning_habitat,
                       inchannel_habitat_fry = model_inputs$inchannel_habitat_fry,

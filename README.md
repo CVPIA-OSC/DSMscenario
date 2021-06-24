@@ -24,7 +24,7 @@ Actions are defined below:
 * 1: Do nothing
 * 2: Add 1 acre of spawning habitat
 * 3: Add 2 acres of inchannel rearing habitat
-* 4: Add 2 acres of floodplain rearing habitat
+* 4: Add 3 acres of floodplain rearing habitat
 * 5: Increase rearing survival by 5%
 
 For more information run `?create_scenario` in the console.
