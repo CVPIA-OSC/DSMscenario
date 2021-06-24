@@ -22,15 +22,23 @@
 #'
 #' }
 #' @examples
-# scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
-#                         "American River", "Feather River", "Lower-mid Sacramento River",
-#                         "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
-#           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
-#           start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
-#           end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
-#           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+#' habitats <- list(
+#'   spawning_habitat = fallRunDSM::params$spawning_habitat,
+#'   inchannel_habitat_fry = fallRunDSM::params$inchannel_habitat_fry,
+#'   inchannel_habitat_juvenile = fallRunDSM::params$inchannel_habitat_juvenile,
+#'   floodplain_habitat = fallRunDSM::params$floodplain_habitat,
+#'   weeks_flooded = fallRunDSM::params$weeks_flooded
+#' )
 #'
-#' load_scenario(scenario_df, )
+#' scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
+#'                         "American River", "Feather River", "Lower-mid Sacramento River",
+#'                         "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
+#'           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
+#'           start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
+#'           end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
+#'           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+#'
+#' load_scenario(scenario_df, habitats)
 #' @export
 load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr")) {
 
@@ -80,15 +88,20 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
                                                   action_units = actions$floodplain,
                                                   amount = three_acres)
 
-  # how should we modify weeks_flooded when floodplain habitat is added
-  # which months do we add floodplain when added
+  survival_adjustment <- modify_survival(actions$survival)
 
   return(list(spawning_habitat = spawning_habitat,
               inchannel_habitat_fry = inchannel_habitat_fry,
               inchannel_habitat_juvenile = inchannel_habitat_juvenile,
               floodplain_habitat = floodplain_habitat$habitat,
               weeks_flooded = floodplain_habitat$weeks_flooded,
-              survival_adjustment = actions$survival))
+              survival_adjustment = survival_adjustment))
+}
+
+#' Modify Survival
+#' @param actions_units matrix of actions units
+modify_survival <- function(action_units) {
+  (action_units * .05) + 1
 }
 
 #' Modify Inchannel Habitat
