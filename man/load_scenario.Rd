@@ -4,45 +4,72 @@
 \alias{load_scenario}
 \title{Load Scenario}
 \usage{
-load_scenario(scenario_df, habitat_inputs)
+load_scenario(
+  scenario_df,
+  habitat_inputs,
+  species = c("fr", "wr", "sr", "st", "lfr")
+)
 }
 \arguments{
 \item{scenario_df}{a dataframe containing scenario information, see details below}
+
+\item{habitat_inputs}{a list with spawning habitat, inchannel fry and juvenile rearing habitat,
+floodplain rearing habitat, and weeks flooded matrices from the lifecycle model
+"params" data object. See the example for more details.}
+
+\item{species}{provide \code{"fr"}, \code{"lfr"}, \code{"wr"}, \code{"sr"}, or \code{"st"} for fall run, late-fall run,
+winter run, spring run, or steelhead respectively to designate which \code{params} data object
+to be modified. For example, supply \code{"fr"} if running the \code{fallRunDSM::fall_run_model}.}
 }
 \description{
-Load Scenario
+Modify baseline model inputs based on a set of actions
 }
 \details{
 The \code{scenario_df} is a dataframe with each row representing a scenario action.
 The dataframe must contain the following columns:
 \itemize{
-  \item "watershed" - The name or index for a watershed, ex. "Upper Sacramento River" or 1
-  \item "action" - The action taken represented by the code 1 - 5, ex: 3
-  \item "start_year"- The simulation year the action begins
-  \item "end_year" - The simulation year the action ends
-  \item "units_of_effort" - number of action units taken, ex: .5 or 1
+  \item \strong{watershed} - The name or index for a watershed, ex. "Upper Sacramento River" or 1
+  \item \strong{action} - The action taken represented by the code 1 - 5, ex: 3 to represent adding inchannel rearing
+  \item \strong{start_year} - The simulation year the action begins
+  \item \strong{end_year} - The simulation year the action ends
+  \item \strong{units_of_effort} - number of action units taken, ex: .5 or 1
 }
 }
 \section{Actions and Units of Effort}{
 
 \itemize{
-  \item Action 1: Do nothing
-  \item Action 2: Add 1 acre of spawning habitat
-  \item Action 3: Add 2 acres of inchannel rearing habitat
-  \item Action 4: Add 3 acres of floodplain rearing habitat
-  \item Action 5: Increase rearing survival by 5%
+  \item \strong{1} - Do nothing
+  \item \strong{2} - Add 1 acre of spawning habitat
+  \item \strong{3} - Add 2 acres of inchannel rearing habitat
+  \item \strong{4} - Add 3 acres of floodplain rearing habitat
+  \item \strong{5} - Increase rearing survival by 5\%
 
 }
 }
 
 \examples{
-scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
-                        "American River", "Feather River", "Lower-mid Sacramento River",
-                        "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
-          action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
-          start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
-          end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
-          units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+habitats <- list(
+  spawning_habitat = fallRunDSM::params$spawning_habitat,
+  inchannel_habitat_fry = fallRunDSM::params$inchannel_habitat_fry,
+  inchannel_habitat_juvenile = fallRunDSM::params$inchannel_habitat_juvenile,
+  floodplain_habitat = fallRunDSM::params$floodplain_habitat,
+  weeks_flooded = fallRunDSM::params$weeks_flooded
+)
 
-load_scenario(scenario_df, )
+scenario_df <- data.frame(watershed = c("Upper Sacramento River",
+                                        "Upper Sacramento River",
+                                        "American River", "Feather River",
+                                        "Lower-mid Sacramento River",
+                                        "Battle Creek", "Butte Creek",
+                                        "Deer Creek", "Stanislaus River"),
+                          action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
+                          start_year = c(1980, 1990, 1980, 1980, 1980, 1990,
+                                         1990, 1990, 1990),
+                          end_year = c(1989, 1999, 1989, 1989, 1989, 1999,
+                                         1999, 1999, 1999),
+                          units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+
+scenario <- load_scenario(scenario_df = scenario_df,
+                          species = DSMscenario::species$FALL_RUN,
+                          habitat_inputs = habitats)
 }

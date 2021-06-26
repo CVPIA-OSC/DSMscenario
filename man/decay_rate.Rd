@@ -6,17 +6,12 @@
 \alias{spawn_decay_rate}
 \alias{rear_decay_rate}
 \title{Decay Rates}
-\format{
-An object of class \code{numeric} of length 31.
-
-An object of class \code{numeric} of length 31.
-}
 \usage{
 spawn_decay_rate
 
 rear_decay_rate
 }
 \description{
-Decay Rates
+An ordered vector of minimum decay rate for each watershed
 }
 \keyword{datasets}

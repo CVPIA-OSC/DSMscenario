@@ -5,12 +5,25 @@
 \alias{scenarios}
 \title{SIT Scenarios}
 \format{
-An object of class \code{list} of length 7.
+An object of class \code{list} of length 8.
 }
 \usage{
-scenarios
+DSMscenario::scenarios$NO_ACTION
+DSMscenario::scenarios$ONE
+DSMscenario::scenarios$TWO
+DSMscenario::scenarios$THREE
+DSMscenario::scenarios$FOUR
+DSMscenario::scenarios$FIVE
+DSMscenario::scenarios$SIX
+DSMscenario::scenarios$SEVEN
 }
 \description{
-SIT Scenarios
+CVPIA SIT's scenario dataframes for scenarios 1-7 and no action
+}
+\examples{
+fall_run_seeds <- fallRunDSM::fall_run_model(mode = "seed")
+fallRunDSM::fall_run_model(scenario = DSMscenario::scenarios$ONE,
+                           mode = "simulate",
+                           seeds = fall_run_seeds)
 }
 \keyword{datasets}

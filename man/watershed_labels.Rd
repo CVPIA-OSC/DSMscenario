@@ -4,13 +4,11 @@
 \name{watershed_labels}
 \alias{watershed_labels}
 \title{Watershed Labels}
-\format{
-An object of class \code{character} of length 31.
-}
 \usage{
 watershed_labels
 }
 \description{
-Watershed Labels
+An ordered vector of watershed names included in the CVPIA SIT's
+    Decision Support Models
 }
 \keyword{datasets}

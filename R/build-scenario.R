@@ -1,26 +1,32 @@
 #' Load Scenario
+#' @description Modify baseline model inputs based on a set of actions
 #' @param scenario_df a dataframe containing scenario information, see details below
-#' @param habitat_inputs
-#' @param species
+#' @param habitat_inputs a list with spawning habitat, inchannel fry and juvenile rearing habitat,
+#'    floodplain rearing habitat, and weeks flooded matrices from the lifecycle model
+#'    "params" data object. See the example for more details.
+#' @param species provide \code{"fr"}, \code{"lfr"}, \code{"wr"}, \code{"sr"}, or \code{"st"} for fall run, late-fall run,
+#'    winter run, spring run, or steelhead respectively to designate which \code{params} data object
+#'    to be modified. For example, supply \code{"fr"} if running the \code{fallRunDSM::fall_run_model}.
 #' @details
 #' The \code{scenario_df} is a dataframe with each row representing a scenario action.
 #' The dataframe must contain the following columns:
 #' \itemize{
-#'   \item "watershed" - The name or index for a watershed, ex. "Upper Sacramento River" or 1
-#'   \item "action" - The action taken represented by the code 1 - 5, ex: 3
-#'   \item "start_year"- The simulation year the action begins
-#'   \item "end_year" - The simulation year the action ends
-#'   \item "units_of_effort" - number of action units taken, ex: .5 or 1
+#'   \item \strong{watershed} - The name or index for a watershed, ex. "Upper Sacramento River" or 1
+#'   \item \strong{action} - The action taken represented by the code 1 - 5, ex: 3 to represent adding inchannel rearing
+#'   \item \strong{start_year} - The simulation year the action begins
+#'   \item \strong{end_year} - The simulation year the action ends
+#'   \item \strong{units_of_effort} - number of action units taken, ex: .5 or 1
 #' }
 #' @section Actions and Units of Effort:
 #' \itemize{
-#'   \item Action 1: Do nothing
-#'   \item Action 2: Add 1 acre of spawning habitat
-#'   \item Action 3: Add 2 acres of inchannel rearing habitat
-#'   \item Action 4: Add 3 acres of floodplain rearing habitat
-#'   \item Action 5: Increase rearing survival by 5%
+#'   \item \strong{1} - Do nothing
+#'   \item \strong{2} - Add 1 acre of spawning habitat
+#'   \item \strong{3} - Add 2 acres of inchannel rearing habitat
+#'   \item \strong{4} - Add 3 acres of floodplain rearing habitat
+#'   \item \strong{5} - Increase rearing survival by 5\%
 #'
 #' }
+#'
 #' @examples
 #' habitats <- list(
 #'   spawning_habitat = fallRunDSM::params$spawning_habitat,
@@ -30,15 +36,22 @@
 #'   weeks_flooded = fallRunDSM::params$weeks_flooded
 #' )
 #'
-#' scenario_df <- data.frame(watershed = c("Upper Sacramento River", "Upper Sacramento River",
-#'                         "American River", "Feather River", "Lower-mid Sacramento River",
-#'                         "Battle Creek", "Butte Creek", "Deer Creek", "Stanislaus River"),
-#'           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
-#'           start_year = c(1980, 1990, 1980, 1980, 1980, 1990, 1990, 1990, 1990),
-#'           end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
-#'           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
+#' scenario_df <- data.frame(watershed = c("Upper Sacramento River",
+#'                                         "Upper Sacramento River",
+#'                                         "American River", "Feather River",
+#'                                         "Lower-mid Sacramento River",
+#'                                         "Battle Creek", "Butte Creek",
+#'                                         "Deer Creek", "Stanislaus River"),
+#'                           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
+#'                           start_year = c(1980, 1990, 1980, 1980, 1980, 1990,
+#'                                          1990, 1990, 1990),
+#'                           end_year = c(1989, 1999, 1989, 1989, 1989, 1999,
+#'                                          1999, 1999, 1999),
+#'                           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
 #'
-#' load_scenario(scenario_df, habitats)
+#' scenario <- load_scenario(scenario_df = scenario_df,
+#'                           species = DSMscenario::species$FALL_RUN,
+#'                           habitat_inputs = habitats)
 #' @export
 load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr")) {
 
@@ -99,17 +112,27 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
 }
 
 #' Modify Survival
+#' @description Adds 5\% to the survival rate per each action unit applied
 #' @param actions_units matrix of actions units
+#' @noRd
 modify_survival <- function(action_units) {
   (action_units * .05) + 1
 }
 
 #' Modify Inchannel Habitat
-#' @description Change amount of habitat
-#' @param habitat
-#' @param action_units
-#' @param amount
-#' @param decay
+#' @description Change amount of spawning or inchannel rearing habitat
+#' @details
+#' This function adds a given amount of habitat per action unit applied within a watershed.
+#' The amount of habitat is variable to reflect partial controllability of restoration projects.
+#' The habitat is added to the base amount of existing habitat for that year and each year after.
+#' If no action is taken on a regulated watershed, then decay is applied for that year
+#' and each following year.
+#' @param habitat a 3-dimensional array [watersheds, months, years] containing spawning or
+#'     inchannel rearing habitat amounts in square meters
+#' @param action_units a matrix [watersheds, years] containing the count of actions taken in a watershed per year
+#' @param amount amount of habitat to add in square meters
+#' @param decay a matrix [watersheds, years] containing a decay rate scalar
+#' @noRd
 modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 21, theoretical_max = NULL) {
 
   amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
@@ -137,10 +160,13 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 
 }
 
 #' Modify Floodplain Habitat
-#' @param habitat
-#' @param weeks_flooded
-#' @param action_units
-#' @param amount
+#' @description Change amount of floodplain habitat and weeks flooded
+#' @param habitat a 3-dimensional array [watersheds, months, years] containing floodplain rearing
+#'    habitat amounts in square meters
+#' @param weeks_flooded a 3-dimensional array [watersheds, months, years] containing number of weeks flooded
+#' @param action_units a matrix [watersheds, years] containing the count of actions taken in a watershed per year
+#' @param amount amount of habitat to add in square meters
+#' @noRd
 modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount) {
   # partial controllability of building 3 acres
   amount_matrix <- matrix(add_parital_controllability(amount, 31*21), nrow = 31)
@@ -166,14 +192,16 @@ modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amou
 #' Add Partial Controllability to Habitat Amount
 #' Randomly increase or decrease amount of habitat created
 #' @param sqm square meter of base habitat amount
-#' @param n
+#' @param n the number of amounts to generate
 #' @noRd
 add_parital_controllability <- function(sqm, n = 1) {
   sqm * pmin(pmax(rgamma(n, 44.44444, scale = 0.02250), 0.5), 1.5)
 }
 
 #' Decay Matrices
-#'
+#' @description Generates matrix [31 watersheds, years] of decay rates for spawning
+#'    and inchannel rearing
+#' @noRd
 decay_amount_matrices <- function() {
 
   spawn_decay_amount <- t(sapply(1:31, function(index) {
@@ -197,7 +225,11 @@ decay_amount_matrices <- function() {
 }
 
 #' Get Action Matrices
-#' @param scenario_df
+#' @description Converts scenario dataframe into a list of matrices [31 watersheds, years]
+#'    for each action type. The matrix values are the number of units of effort applied
+#'    for that action type within a watershed for that year.
+#' @param scenario_df scenario dataframe
+#' @noRd
 get_action_matrices <- function(scenario_df) {
 
   spawn_actions <- get_action_units(scenario_df, action_type = 2)
@@ -210,8 +242,11 @@ get_action_matrices <- function(scenario_df) {
 }
 
 #' Get Action Units
-#' @param scenario_df
-#' @param action_type
+#' @description Produces a matrix for an action type where the values are the number
+#'    of units of effort applied for a watershed that year.
+#' @param scenario_df scenario dataframe
+#' @param action_type action_type 1-5
+#' @noRd
 get_action_units <- function(scenario_df, action_type) {
 
   actions <- subset(scenario_df, action == action_type)

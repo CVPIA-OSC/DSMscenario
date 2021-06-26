@@ -2,5 +2,4 @@
 
 export("%>%")
 export(load_scenario)
-export(modify_habitat)
 importFrom(magrittr,"%>%")
