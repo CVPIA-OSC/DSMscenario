@@ -47,3 +47,54 @@ grp <- read_csv('data-raw/Grouping.csv')
 watershed_groups <- grp$grp
 names(watershed_groups) <- DSMscenario::watershed_labels
 usethis::use_data(watershed_groups)
+
+# Max habitat -----
+fr_rear_max <- set_names(pmax(purrr::map_dbl(1:31, ~max(DSMhabitat::fr_fry[.,,])),
+                              purrr::map_dbl(1:31, ~max(DSMhabitat::fr_juv[.,,]))),
+                         DSMscenario::watershed_labels) * 2
+
+fr_spawn_max <- set_names(purrr::map_dbl(1:31, ~max(DSMhabitat::fr_spawn[.,,])),
+                          DSMscenario::watershed_labels) * 2
+
+wr_rear_max <- set_names(pmax(purrr::map_dbl(1:31, ~max(DSMhabitat::wr_fry[.,,])),
+                              purrr::map_dbl(1:31, ~max(DSMhabitat::wr_juv[.,,]))),
+                         DSMscenario::watershed_labels) * 2
+
+wr_spawn_max <- set_names(purrr::map_dbl(1:31, ~max(DSMhabitat::wr_spawn[.,,])),
+                          DSMscenario::watershed_labels) * 2
+
+sr_rear_max <- set_names(pmax(purrr::map_dbl(1:31, ~max(DSMhabitat::sr_fry[.,,])),
+                              purrr::map_dbl(1:31, ~max(DSMhabitat::sr_juv[.,,]))),
+                         DSMscenario::watershed_labels) * 2
+sr_spawn_max <- set_names(purrr::map_dbl(1:31, ~max(DSMhabitat::sr_spawn[.,,])),
+                          DSMscenario::watershed_labels) * 2
+
+st_rear_max <- set_names(pmax(purrr::map_dbl(1:31, ~max(DSMhabitat::st_fry[.,,])),
+                              purrr::map_dbl(1:31, ~max(DSMhabitat::st_juv[.,,]))),
+                         DSMscenario::watershed_labels) * 2
+st_spawn_max <- set_names(purrr::map_dbl(1:31, ~max(DSMhabitat::st_spawn[.,,])),
+                          DSMscenario::watershed_labels) * 2
+
+# TODO run late fall run after habitat pkg is updated
+# lfr_rear_max <- set_names(pmax(purrr::map_dbl(1:31, ~max(DSMhabitat::lfr_fry[.,,])),
+#                                purrr::map_dbl(1:31, ~max(DSMhabitat::lfr_juv[.,,]))),
+#                           DSMscenario::watershed_labels) * 2
+#
+# lfr_spawn_max <- set_names(purrr::map_dbl(1:31, ~max(DSMhabitat::lfr_spawn[.,,])),
+#                            DSMscenario::watershed_labels) * 2
+max_rear_area <- list(
+  "FALL" = fr_rear_max,
+  # "LATE_FALL" = lfr_rear_max,
+  "WINTER" = wr_rear_max,
+  "SPRING" = sr_rear_max,
+  "STEELHEAD" = st_rear_max)
+
+max_spawn_area <- list(
+  "FALL" = fr_spawn_max,
+  # "LATE_FALL" = lfr_spawn_max,
+  "WINTER" = wr_spawn_max,
+  "SPRING" = sr_spawn_max,
+  "STEELHEAD" = st_spawn_max)
+
+usethis::use_data(max_spawn_area, overwrite = TRUE)
+usethis::use_data(max_rear_area, overwrite = TRUE)
