@@ -62,14 +62,14 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
                                           "wr" = DSMscenario::max_spawn_area$WINTER,
                                           "sr" = DSMscenario::max_spawn_area$SPRING,
                                           "st" = DSMscenario::max_spawn_area$STEELHEAD,
-                                          "lfr" = DSMscenario::max_spawn_area$LATEFALL)
+                                          "lfr" = DSMscenario::max_spawn_area$LATE_FALL)
 
   rear_theoretical_habitat_max <- switch(species,
                                          "fr" = DSMscenario::max_rear_area$FALL,
                                          "wr" = DSMscenario::max_rear_area$WINTER,
                                          "sr" = DSMscenario::max_rear_area$SPRING,
                                          "st" = DSMscenario::max_rear_area$STEELHEAD,
-                                         "lfr" = DSMscenario::max_rear_area$LATEFALL)
+                                         "lfr" = DSMscenario::max_rear_area$LATE_FALL)
   one_acre <- 4046.86
   two_acres <- 8093.72
   three_acres <- 12140.59
@@ -155,6 +155,7 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 
 
   # Do not let habitat amount exceed theoretical habitat maximum for spawn and inchannel rearing
   habitat <- pmin(habitat, theoretical_max)
+
 
   return(habitat)
 }
