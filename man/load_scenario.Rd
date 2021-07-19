@@ -5,14 +5,12 @@
 \title{Load Scenario}
 \usage{
 load_scenario(
-  scenario_df,
+  scenario,
   habitat_inputs,
   species = c("fr", "wr", "sr", "st", "lfr")
 )
 }
 \arguments{
-\item{scenario_df}{a dataframe containing scenario information, see details below}
-
 \item{habitat_inputs}{a list with spawning habitat, inchannel fry and juvenile rearing habitat,
 floodplain rearing habitat, and weeks flooded matrices from the lifecycle model
 "params" data object. See the example for more details.}
@@ -20,6 +18,8 @@ floodplain rearing habitat, and weeks flooded matrices from the lifecycle model
 \item{species}{provide \code{"fr"}, \code{"lfr"}, \code{"wr"}, \code{"sr"}, or \code{"st"} for fall run, late-fall run,
 winter run, spring run, or steelhead respectively to designate which \code{params} data object
 to be modified. For example, supply \code{"fr"} if running the \code{fallRunDSM::fall_run_model}.}
+
+\item{scenario_df}{a dataframe containing scenario information, see details below}
 }
 \description{
 Modify baseline model inputs based on a set of actions
@@ -56,20 +56,7 @@ habitats <- list(
   weeks_flooded = fallRunDSM::params$weeks_flooded
 )
 
-scenario_df <- data.frame(watershed = c("Upper Sacramento River",
-                                        "Upper Sacramento River",
-                                        "American River", "Feather River",
-                                        "Lower-mid Sacramento River",
-                                        "Battle Creek", "Butte Creek",
-                                        "Deer Creek", "Stanislaus River"),
-                          action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
-                          start_year = c(1980, 1990, 1980, 1980, 1980, 1990,
-                                         1990, 1990, 1990),
-                          end_year = c(1989, 1999, 1989, 1989, 1989, 1999,
-                                         1999, 1999, 1999),
-                          units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
-
-scenario <- load_scenario(scenario_df = scenario_df,
+scenario <- load_scenario(scenario = DSMscenario::scenarios$ONE,
                           species = DSMscenario::species$FALL_RUN,
                           habitat_inputs = habitats)
 }

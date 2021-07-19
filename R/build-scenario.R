@@ -36,24 +36,11 @@
 #'   weeks_flooded = fallRunDSM::params$weeks_flooded
 #' )
 #'
-#' scenario_df <- data.frame(watershed = c("Upper Sacramento River",
-#'                                         "Upper Sacramento River",
-#'                                         "American River", "Feather River",
-#'                                         "Lower-mid Sacramento River",
-#'                                         "Battle Creek", "Butte Creek",
-#'                                         "Deer Creek", "Stanislaus River"),
-#'                           action = c(3, 3, 3, 3, 3, 3, 3, 3, 3),
-#'                           start_year = c(1980, 1990, 1980, 1980, 1980, 1990,
-#'                                          1990, 1990, 1990),
-#'                           end_year = c(1989, 1999, 1989, 1989, 1989, 1999,
-#'                                          1999, 1999, 1999),
-#'                           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
-#'
-#' scenario <- load_scenario(scenario_df = scenario_df,
+#' scenario <- load_scenario(scenario = DSMscenario::scenarios$ONE,
 #'                           species = DSMscenario::species$FALL_RUN,
 #'                           habitat_inputs = habitats)
 #' @export
-load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr")) {
+load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr")) {
 
   species <- match.arg(species)
 
@@ -74,34 +61,33 @@ load_scenario <- function(scenario_df, habitat_inputs, species = c("fr", "wr", "
   two_acres <- 8093.72
   three_acres <- 12140.59
 
-  actions <- get_action_matrices(scenario_df)
   decay <- decay_amount_matrices()
 
   spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
-                                     action_units = actions$spawn,
+                                     action_units = scenario$spawn,
                                      amount = one_acre,
                                      decay = decay$spawn,
                                      years = 22,
                                      theoretical_max = spawn_theoretical_habitat_max)
 
   inchannel_habitat_fry <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_fry,
-                                          action_units = actions$inchannel,
+                                          action_units = scenario$inchannel,
                                           amount = two_acres,
                                           decay = decay$rear,
                                           theoretical_max = rear_theoretical_habitat_max)
 
   inchannel_habitat_juvenile <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_juvenile,
-                                               action_units = actions$inchannel,
+                                               action_units = scenario$inchannel,
                                                amount = two_acres,
                                                decay = decay$rear,
                                                theoretical_max = rear_theoretical_habitat_max)
 
   floodplain_habitat <- modify_floodplain_habitat(habitat = habitat_inputs$floodplain_habitat,
                                                   weeks_flooded = habitat_inputs$weeks_flooded,
-                                                  action_units = actions$floodplain,
+                                                  action_units = scenario$floodplain,
                                                   amount = three_acres)
 
-  survival_adjustment <- modify_survival(actions$survival)
+  survival_adjustment <- modify_survival(scenario$survival)
 
   return(list(spawning_habitat = spawning_habitat,
               inchannel_habitat_fry = inchannel_habitat_fry,
@@ -230,7 +216,7 @@ decay_amount_matrices <- function() {
 #'    for each action type. The matrix values are the number of units of effort applied
 #'    for that action type within a watershed for that year.
 #' @param scenario_df scenario dataframe
-#' @noRd
+#' @export
 get_action_matrices <- function(scenario_df) {
 
   spawn_actions <- get_action_units(scenario_df, action_type = 2)

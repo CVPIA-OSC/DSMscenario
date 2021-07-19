@@ -61,7 +61,9 @@ scenario_df <- data.frame(
   end_year = c(1989, 1999, 1989, 1989, 1989, 1999, 1999, 1999, 1999),
   units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
 
-scenario <- load_scenario(scenario_df = scenario_df,
+scenario <- get_action_matrices(scenario_df)
+
+scenario <- load_scenario(scenario = scenario,
                           species = DSMscenario::species$FALL_RUN,
                           habitat_inputs = habitats)
 
