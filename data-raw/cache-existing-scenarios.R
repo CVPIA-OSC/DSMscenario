@@ -14,4 +14,15 @@ scenarios$NO_ACTION <- get_action_matrices(tibble::tibble(
   end_year = 1981,
   units_of_effort = 1))
 
+scenarios$NO_ACTION_GRANDTAB <- scenarios$NO_ACTION
+scenarios$NO_ACTION_GRANDTAB$spawn <- scenarios$NO_ACTION_GRANDTAB$spawn[, -1]
+scenarios$NO_ACTION_GRANDTAB$inchannel <- scenarios$NO_ACTION_GRANDTAB$inchannel[, -1]
+scenarios$NO_ACTION_GRANDTAB$floodplain <- scenarios$NO_ACTION_GRANDTAB$floodplain[, -1]
+scenarios$NO_ACTION_GRANDTAB$survival <- scenarios$NO_ACTION_GRANDTAB$survival[, -1]
+
+colnames(scenarios$NO_ACTION_GRANDTAB$spawn) <- 1997:2017
+colnames(scenarios$NO_ACTION_GRANDTAB$inchannel) <- 1998:2017
+colnames(scenarios$NO_ACTION_GRANDTAB$floodplain) <- 1998:2017
+colnames(scenarios$NO_ACTION_GRANDTAB$survival) <- 1998:2017
+
 usethis::use_data(scenarios, overwrite = TRUE)

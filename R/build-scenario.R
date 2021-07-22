@@ -61,13 +61,13 @@ load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr"
   two_acres <- 8093.72
   three_acres <- 12140.59
 
-  decay <- decay_amount_matrices()
+  decay <- decay_amount_matrices(spawn_years = dim(habitat_inputs$spawning_habitat)[3],
+                                 rear_years = dim(habitat_inputs$inchannel_habitat_fry)[3])
 
   spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
                                      action_units = scenario$spawn,
                                      amount = one_acre,
                                      decay = decay$spawn,
-                                     years = 22,
                                      theoretical_max = spawn_theoretical_habitat_max)
 
   inchannel_habitat_fry <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_fry,
@@ -119,7 +119,9 @@ modify_survival <- function(action_units) {
 #' @param amount amount of habitat to add in square meters
 #' @param decay a matrix [watersheds, years] containing a decay rate scalar
 #' @noRd
-modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 21, theoretical_max = NULL) {
+modify_habitat <- function(habitat, action_units, amount, decay = NULL, theoretical_max = NULL) {
+
+  years <- dim(habitat)[3]
 
   amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
 
@@ -156,12 +158,13 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, years = 
 #' @noRd
 modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount) {
   # partial controllability of building 3 acres
-  amount_matrix <- matrix(add_parital_controllability(amount, 31*21), nrow = 31)
+  years <- dim(habitat)[3]
+  amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
 
   # acres built times unit of effort with acres built accumulating
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
 
-  for (year in 1:21) {
+  for (year in 1:years) {
     # floodplain built activated 2 out of 3 years
     if (rbinom(1, 1, 0.67)) {
       # floodplain active 2 months between 1-4
@@ -189,14 +192,14 @@ add_parital_controllability <- function(sqm, n = 1) {
 #' @description Generates matrix [31 watersheds, years] of decay rates for spawning
 #'    and inchannel rearing
 #' @noRd
-decay_amount_matrices <- function() {
+decay_amount_matrices <- function(spawn_years, rear_years) {
 
   spawn_decay_amount <- t(sapply(1:31, function(index) {
-    runif(22, min = DSMscenario::spawn_decay_rate[index], max = 1)
+    runif(spawn_years, min = DSMscenario::spawn_decay_rate[index], max = 1)
   }))
 
   rear_decay_amount <- t(sapply(1:31, function(index) {
-    runif(21, min = DSMscenario::rear_decay_rate[index], max = 1)
+    runif(rear_years, min = DSMscenario::rear_decay_rate[index], max = 1)
   }))
 
   # remove decay from non-regulated tribs and Bypasses and San Joaquin River

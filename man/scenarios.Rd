@@ -5,7 +5,7 @@
 \alias{scenarios}
 \title{SIT Scenarios}
 \format{
-An object of class \code{list} of length 8.
+An object of class \code{list} of length 9.
 }
 \usage{
 DSMscenario::scenarios$NO_ACTION
