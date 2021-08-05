@@ -5,7 +5,7 @@
 \alias{scenarios}
 \title{SIT Scenarios}
 \format{
-An object of class \code{list} of length 9.
+An object of class \code{list} of length 14.
 }
 \usage{
 DSMscenario::scenarios$NO_ACTION
@@ -16,6 +16,12 @@ DSMscenario::scenarios$FOUR
 DSMscenario::scenarios$FIVE
 DSMscenario::scenarios$SIX
 DSMscenario::scenarios$SEVEN
+DSMscenario::scenarios$EIGHT
+DSMscenario::scenarios$NINE
+DSMscenario::scenarios$TEN
+DSMscenario::scenarios$ELEVEN
+DSMscenario::scenarios$TWELVE
+DSMscenario::scenarios$THIRTEEN
 }
 \description{
 CVPIA SIT's scenario dataframes for scenarios 1-7 and no action

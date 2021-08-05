@@ -28,6 +28,12 @@ NULL
 #' DSMscenario::scenarios$FIVE
 #' DSMscenario::scenarios$SIX
 #' DSMscenario::scenarios$SEVEN
+#' DSMscenario::scenarios$EIGHT
+#' DSMscenario::scenarios$NINE
+#' DSMscenario::scenarios$TEN
+#' DSMscenario::scenarios$ELEVEN
+#' DSMscenario::scenarios$TWELVE
+#' DSMscenario::scenarios$THIRTEEN
 #' @examples
 #' fall_run_seeds <- fallRunDSM::fall_run_model(mode = "seed")
 #' fallRunDSM::fall_run_model(scenario = DSMscenario::scenarios$ONE,
