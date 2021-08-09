@@ -175,7 +175,8 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, theoreti
 #' @param action_units a matrix [watersheds, years] containing the count of actions taken in a watershed per year
 #' @param amount amount of habitat to add in square meters
 #' @noRd
-modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount, stochastic) {
+modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount,
+                                      stochastic) {
   # partial controllability of building 3 acres
   years <- dim(habitat)[3]
 
@@ -191,13 +192,21 @@ modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amou
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
 
   for (year in 1:years) {
-    # floodplain built activated 2 out of 3 years
-    if (rbinom(1, 1, 0.67)) {
-      # floodplain active 2 months between 1-4
-      first_active_month <- sample(1:3, 1)
-      active_months <- c(first_active_month, first_active_month + 1)
-      habitat[ , active_months, year] <- habitat[ , active_months, year] + cumulative_amount_matrix[ , year]
-      weeks_flooded[ , active_months, year] <- pmax(weeks_flooded[ , active_months, year], 2)
+    if (stochastic) {
+      # floodplain built activated 2 out of 3 years
+      if (rbinom(1, 1, 0.67)) {
+        # floodplain active 2 months between 1-4
+        first_active_month <- sample(1:3, 1)
+        active_months <- c(first_active_month, first_active_month + 1)
+        habitat[ , active_months, year] <- habitat[ , active_months, year] + cumulative_amount_matrix[ , year]
+        weeks_flooded[ , active_months, year] <- pmax(weeks_flooded[ , active_months, year], 2)
+      }
+    } else {
+      if (year %in% which(1:21 %% 3 != 0)) {
+        active_months <- c(1, 3)
+        habitat[ , active_months, year] <- habitat[ , active_months, year] + cumulative_amount_matrix[ , year]
+        weeks_flooded[ , active_months, years] <- pmax(weeks_flooded[ , active_months, years], 2)
+      }
     }
   }
 
