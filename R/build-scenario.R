@@ -7,6 +7,9 @@
 #' @param species provide \code{"fr"}, \code{"lfr"}, \code{"wr"}, \code{"sr"}, or \code{"st"} for fall run, late-fall run,
 #'    winter run, spring run, or steelhead respectively to designate which \code{params} data object
 #'    to be modified. For example, supply \code{"fr"} if running the \code{fallRunDSM::fall_run_model}.
+#' @param spawn_decay_rate length 31 vector of 1 - spawning decay rate estimates
+#' @param rear_decay_rate length 31 vector of 1 - rearing decay rate estimates
+#' @param stochastic boolean, TRUE for creating scenarios with stochasticity
 #' @details
 #' The \code{scenario_df} is a dataframe with each row representing a scenario action.
 #' The dataframe must contain the following columns:
@@ -40,7 +43,10 @@
 #'                           species = DSMscenario::species$FALL_RUN,
 #'                           habitat_inputs = habitats)
 #' @export
-load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr")) {
+load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr"),
+                          spawn_decay_rate = DSMscenario::spawn_decay_rate,
+                          rear_decay_rate = DSMscenario::rear_decay_rate,
+                          stochastic = TRUE) {
 
   species <- match.arg(species)
 
@@ -62,30 +68,37 @@ load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr"
   three_acres <- 12140.59
 
   decay <- decay_amount_matrices(spawn_years = dim(habitat_inputs$spawning_habitat)[3],
-                                 rear_years = dim(habitat_inputs$inchannel_habitat_fry)[3])
+                                 rear_years = dim(habitat_inputs$inchannel_habitat_fry)[3],
+                                 spawn_decay_rate = spawn_decay_rate,
+                                 rear_decay_rate = rear_decay_rate,
+                                 stochastic = stochastic)
 
   spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
                                      action_units = scenario$spawn,
                                      amount = one_acre,
                                      decay = decay$spawn,
-                                     theoretical_max = spawn_theoretical_habitat_max)
+                                     theoretical_max = spawn_theoretical_habitat_max,
+                                     stochastic = stochastic)
 
   inchannel_habitat_fry <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_fry,
                                           action_units = scenario$inchannel,
                                           amount = two_acres,
                                           decay = decay$rear,
-                                          theoretical_max = rear_theoretical_habitat_max)
+                                          theoretical_max = rear_theoretical_habitat_max,
+                                          stochastic = stochastic)
 
   inchannel_habitat_juvenile <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_juvenile,
                                                action_units = scenario$inchannel,
                                                amount = two_acres,
                                                decay = decay$rear,
-                                               theoretical_max = rear_theoretical_habitat_max)
+                                               theoretical_max = rear_theoretical_habitat_max,
+                                               stochastic = stochastic)
 
   floodplain_habitat <- modify_floodplain_habitat(habitat = habitat_inputs$floodplain_habitat,
                                                   weeks_flooded = habitat_inputs$weeks_flooded,
                                                   action_units = scenario$floodplain,
-                                                  amount = three_acres)
+                                                  amount = three_acres,
+                                                  stochastic = stochastic)
 
   survival_adjustment <- modify_survival(scenario$survival)
 
@@ -119,11 +132,17 @@ modify_survival <- function(action_units) {
 #' @param amount amount of habitat to add in square meters
 #' @param decay a matrix [watersheds, years] containing a decay rate scalar
 #' @noRd
-modify_habitat <- function(habitat, action_units, amount, decay = NULL, theoretical_max = NULL) {
+modify_habitat <- function(habitat, action_units, amount, decay = NULL, theoretical_max = NULL, stochastic) {
 
   years <- dim(habitat)[3]
 
-  amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
+  if (stochastic) {
+    amounts <- add_parital_controllability(amount, 31*years)
+  } else {
+    amounts <- rep(amount, 31*years)
+  }
+
+  amount_matrix <- matrix(amounts, nrow = 31)
 
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
   annual_decay <- as.numeric(!action_units)*decay
@@ -156,10 +175,17 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, theoreti
 #' @param action_units a matrix [watersheds, years] containing the count of actions taken in a watershed per year
 #' @param amount amount of habitat to add in square meters
 #' @noRd
-modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount) {
+modify_floodplain_habitat <- function(habitat, weeks_flooded, action_units, amount, stochastic) {
   # partial controllability of building 3 acres
   years <- dim(habitat)[3]
-  amount_matrix <- matrix(add_parital_controllability(amount, 31*years), nrow = 31)
+
+  if (stochastic) {
+    amounts <- add_parital_controllability(amount, 31*years)
+  } else {
+    amounts <- rep(amount, 31*years)
+  }
+
+  amount_matrix <- matrix(amounts, nrow = 31)
 
   # acres built times unit of effort with acres built accumulating
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
@@ -192,15 +218,26 @@ add_parital_controllability <- function(sqm, n = 1) {
 #' @description Generates matrix [31 watersheds, years] of decay rates for spawning
 #'    and inchannel rearing
 #' @noRd
-decay_amount_matrices <- function(spawn_years, rear_years) {
+decay_amount_matrices <- function(spawn_years, rear_years, spawn_decay_rate,
+                                  rear_decay_rate, stochastic) {
 
-  spawn_decay_amount <- t(sapply(1:31, function(index) {
-    runif(spawn_years, min = DSMscenario::spawn_decay_rate[index], max = 1)
-  }))
 
-  rear_decay_amount <- t(sapply(1:31, function(index) {
-    runif(rear_years, min = DSMscenario::rear_decay_rate[index], max = 1)
-  }))
+    spawn_decay_amount <- t(sapply(1:31, function(index) {
+      if (stochastic) {
+        runif(spawn_years, min = spawn_decay_rate[index], max = 1)
+      } else {
+        rep(mean(c(spawn_decay_rate[index], 1)), spawn_years)
+      }
+    }))
+
+    rear_decay_amount <- t(sapply(1:31, function(index) {
+      if (stochastic) {
+        runif(rear_years, min = rear_decay_rate[index], max = 1)
+      } else {
+        rep(mean(c(rear_decay_rate[index], 1)), rear_years)
+      }
+    }))
+
 
   # remove decay from non-regulated tribs and Bypasses and San Joaquin River
   tribs_with_no_decay <-
