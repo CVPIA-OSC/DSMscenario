@@ -3,7 +3,7 @@
 \docType{data}
 \name{species}
 \alias{species}
-\title{Regulated Watersheds}
+\title{Species}
 \format{
 An object of class \code{list} of length 5.
 }
