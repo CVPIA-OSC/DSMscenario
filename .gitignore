@@ -47,3 +47,4 @@ po/*~
 inst/doc
 
 *.~lock*
+docs

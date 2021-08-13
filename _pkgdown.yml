@@ -1,0 +1,48 @@
+title: DSMscenario
+url: https://CVPIA-OSC.github.io/DSMscenario/
+template:
+  params:
+    bootswatch: yeti
+
+home:
+  links:
+  - text: Fish and Wildlife Service's CVPIA website
+    href: https://www.fws.gov/lodi/anadromous_fish_restoration/afrp_index.htm
+  - text: Bureau of Reclamation's CVPIA website
+    href: https://www.usbr.gov/mp/cvpia/
+
+reference:
+- title: Scenario Functions
+  desc: Functions to apply scenarios to the CVPIA Salmon Population Model
+  contents:
+  - get_action_matrices
+  - load_scenario
+
+- title: Scenario Data
+  desc: Scenario Data used in CVPIA Salmon Population Models
+  contents:
+  - max_rear_area
+  - max_spawn_area
+  - regulated_watersheds
+  - rear_decay_rate
+  - scenarios
+  - spawn_decay_rate
+  - watershed_groups
+  - watershed_labels
+
+navbar:
+  type: default
+  left:
+  - text: 'Reference'
+    href: reference/index.html
+  - text: 'News'
+    href: news/index.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/CVPIA-OSC/DSMscenario
+
+
+repo:
+  url:
+    home: https://github.com/CVPIA-OSC/DSMscenario
+    issue: https://github.com/CVPIA-OSC/DSMscenario/issues/
