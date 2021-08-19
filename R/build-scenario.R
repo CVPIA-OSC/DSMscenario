@@ -148,7 +148,7 @@ modify_habitat <- function(habitat, action_units, amount, decay = NULL, theoreti
   cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
   annual_decay <- as.numeric(!action_units)*decay
 
-  for (i in 1:years) {
+  for (i in 1:nrow(annual_decay)) {
     annual_decay[i, annual_decay[i,] != 0] <- cumprod(annual_decay[i, annual_decay[i,] != 0])
   }
   cumulative_decay_matrix <- replace(annual_decay, annual_decay == 0, 1)
