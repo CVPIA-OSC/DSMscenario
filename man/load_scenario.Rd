@@ -7,7 +7,10 @@
 load_scenario(
   scenario,
   habitat_inputs,
-  species = c("fr", "wr", "sr", "st", "lfr")
+  species = c("fr", "wr", "sr", "st", "lfr"),
+  spawn_decay_rate = DSMscenario::spawn_decay_rate,
+  rear_decay_rate = DSMscenario::rear_decay_rate,
+  stochastic = TRUE
 )
 }
 \arguments{
@@ -18,6 +21,12 @@ floodplain rearing habitat, and weeks flooded matrices from the lifecycle model
 \item{species}{provide \code{"fr"}, \code{"lfr"}, \code{"wr"}, \code{"sr"}, or \code{"st"} for fall run, late-fall run,
 winter run, spring run, or steelhead respectively to designate which \code{params} data object
 to be modified. For example, supply \code{"fr"} if running the \code{fallRunDSM::fall_run_model}.}
+
+\item{spawn_decay_rate}{length 31 vector of 1 - spawning decay rate estimates}
+
+\item{rear_decay_rate}{length 31 vector of 1 - rearing decay rate estimates}
+
+\item{stochastic}{boolean, TRUE for creating scenarios with stochasticity}
 
 \item{scenario_df}{a dataframe containing scenario information, see details below}
 }

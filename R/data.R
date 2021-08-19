@@ -50,7 +50,7 @@ NULL
 #'   on the watershed.
 "regulated_watersheds"
 
-#' Regulated Watersheds
+#' Species
 #' @description A helper list object for setting the species value when running \code{load_scenario}
 #' @usage
 #' DSMscenario::species$FALL_RUN
