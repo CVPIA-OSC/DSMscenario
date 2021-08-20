@@ -8,6 +8,10 @@ raw_scenarios <- read_excel("data-raw/scenarios.xlsx", sheet = "scenarios")
 scenarios <- purrr::map(1:7, ~get_action_matrices(filter(raw_scenarios, scenario == .))) %>%
   purrr::set_names(toupper(c("one", "two", "three", "four", "five", "six", "seven")))
 
+no_decay_alt <- watershed_labels %in% c("Clear Creek", "Butte Creek", "Upper Sacramento River")
+names(no_decay_alt) <- watershed_labels
+scenarios$SIX$no_decay <- no_decay_alt
+
 # baseline scenario ----
 scenarios$NO_ACTION <- get_action_matrices(tibble::tibble(
   watershed = DSMscenario::watershed_labels,

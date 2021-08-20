@@ -72,6 +72,7 @@ load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr"
                                  spawn_decay_rate = spawn_decay_rate,
                                  rear_decay_rate = rear_decay_rate,
                                  species = species,
+                                 no_decay_tribs = scenario$no_decay,
                                  stochastic = stochastic)
 
   spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
@@ -229,7 +230,8 @@ add_parital_controllability <- function(sqm, n = 1) {
 #'    and inchannel rearing
 #' @noRd
 decay_amount_matrices <- function(spawn_years, rear_years, spawn_decay_rate,
-                                  rear_decay_rate, species, stochastic) {
+                                  rear_decay_rate, species, no_decay_tribs,
+                                  stochastic) {
 
 
     spawn_decay_amount <- t(sapply(1:31, function(index) {
@@ -256,9 +258,11 @@ decay_amount_matrices <- function(spawn_years, rear_years, spawn_decay_rate,
     DSMscenario::regulated_watersheds$FALL
   }
 
-  tribs_with_no_decay <-
-    !regulated_watersheds |
-    (DSMscenario::watershed_groups > 7)
+  tribs_with_no_decay <-if (!is.null(no_decay_tribs)) {
+      !regulated_watersheds | (DSMscenario::watershed_groups > 7) | no_decay_tribs
+  } else {
+    !regulated_watersheds | (DSMscenario::watershed_groups > 7)
+  }
 
   spawn_decay_amount[tribs_with_no_decay, ] <- 1
   rear_decay_amount[tribs_with_no_decay, ] <- 1
