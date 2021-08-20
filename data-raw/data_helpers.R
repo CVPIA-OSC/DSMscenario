@@ -41,14 +41,18 @@ usethis::use_data(rear_decay_rate, overwrite = TRUE)
 species <- list(FALL_RUN = "fr", WINTER_RUN = "wr", SPRING_RUN = "sr", STEELHEAD = "st", LATE_FALL_RUN = "lfr")
 usethis::use_data(species)
 
-regulated_watersheds <- c(1,0,1,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,1,1,1,0,1,1,1,0,1,1,1,1,1)
+
+regulated_watersheds <- c(1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+                          1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0)
 names(regulated_watersheds) <- DSMscenario::watershed_labels
-usethis::use_data(regulated_watersheds)
+usethis::use_data(regulated_watersheds, overwrite = TRUE)
 
 grp <- read_csv('data-raw/Grouping.csv')
 watershed_groups <- grp$grp
 names(watershed_groups) <- DSMscenario::watershed_labels
-usethis::use_data(watershed_groups)
+watershed_groups["San Joaquin River"] <- 7
+usethis::use_data(watershed_groups, overwrite = TRUE)
+# TODO update csv after conversation
 
 # Max habitat -----
 fr_rear_max <- set_names(pmax(purrr::map_dbl(1:31, ~max(DSMhabitat::fr_fry[.,,])),
