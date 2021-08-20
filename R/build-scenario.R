@@ -1,6 +1,6 @@
 #' Load Scenario
 #' @description Modify baseline model inputs based on a set of actions
-#' @param scenario_df a dataframe containing scenario information, see details below
+#' @param scenario a list containing scenario information, see details below
 #' @param habitat_inputs a list with spawning habitat, inchannel fry and juvenile rearing habitat,
 #'    floodplain rearing habitat, and weeks flooded matrices from the lifecycle model
 #'    "params" data object. See the example for more details.
@@ -11,26 +11,26 @@
 #' @param rear_decay_rate length 31 vector of 1 - rearing decay rate estimates
 #' @param stochastic boolean, TRUE for creating scenarios with stochasticity
 #' @details
-#' The \code{scenario_df} is a dataframe with each row representing a scenario action.
-#' The dataframe must contain the following columns:
-#' \itemize{
-#'   \item \strong{watershed} - The name or index for a watershed, ex. "Upper Sacramento River" or 1
-#'   \item \strong{action} - The action taken represented by the code 1 - 5, ex: 3 to represent adding inchannel rearing
-#'   \item \strong{start_year} - The simulation year the action begins
-#'   \item \strong{end_year} - The simulation year the action ends
-#'   \item \strong{units_of_effort} - number of action units taken, ex: .5 or 1
-#' }
-#' @section Actions and Units of Effort:
-#' \itemize{
-#'   \item \strong{1} - Do nothing
-#'   \item \strong{2} - Add 1 acre of spawning habitat
-#'   \item \strong{3} - Add 2 acres of inchannel rearing habitat
-#'   \item \strong{4} - Add 3 acres of floodplain rearing habitat
-#'   \item \strong{5} - Increase rearing survival by 5\%
+#' A scenario is a list of 31 by 20 matrices with each value representing the units
+#' of effort to apply in a tributarty in a given year for a action type.
 #'
-#' }
+#' The scenario list should be formatted like this:
 #'
+#' \code{list(spawn = matrix(), inchannel = matrix(), floodplain = matrix(), survival = matrix())}
+#'
+#' A scenario can also include a boolean vector named \code{no_decay} if the user
+#' desires to exclude a watershed from spawning and rearing habitat decay.
 #' @examples
+#' scenario_df <- tibble(watershed = "Lower Sacramento River",
+#'                       action = 3,
+#'                       start_year = 1980,
+#'                       end_year = 1999,
+#'                       units_of_effort = 1)
+#' no_decay_alt <- watershed_labels %in% c("Clear Creek", "Butte Creek", "Upper Sacramento River")
+#' names(no_decay_alt) <- watershed_labels
+#' custom_scenario <- get_action_matrices(scenario_df)
+#' custom_scenario$no_decay <- no_decay_alt
+#'
 #' habitats <- list(
 #'   spawning_habitat = fallRunDSM::params$spawning_habitat,
 #'   inchannel_habitat_fry = fallRunDSM::params$inchannel_habitat_fry,
@@ -39,11 +39,16 @@
 #'   weeks_flooded = fallRunDSM::params$weeks_flooded
 #' )
 #'
-#' scenario <- load_scenario(scenario = DSMscenario::scenarios$ONE,
-#'                           species = DSMscenario::species$FALL_RUN,
-#'                           habitat_inputs = habitats)
+#' scenario_custom <- load_scenario(scenario = custom_scenario,
+#'                                  species = DSMscenario::species$FALL_RUN,
+#'                                  habitat_inputs = habitats)
+#'
+#' scenario_one <- load_scenario(scenario = DSMscenario::scenarios$ONE,
+#'                               species = DSMscenario::species$FALL_RUN,
+#'                               habitat_inputs = habitats)
 #' @export
-load_scenario <- function(scenario, habitat_inputs, species = c("fr", "wr", "sr", "st", "lfr"),
+load_scenario <- function(scenario, habitat_inputs,
+                          species = c("fr", "wr", "sr", "st", "lfr"),
                           spawn_decay_rate = DSMscenario::spawn_decay_rate,
                           rear_decay_rate = DSMscenario::rear_decay_rate,
                           stochastic = TRUE) {
@@ -252,16 +257,10 @@ decay_amount_matrices <- function(spawn_years, rear_years, spawn_decay_rate,
 
 
   # remove decay from non-regulated tribs and Bypasses and San Joaquin River
-  regulated_watersheds <- if (species == 'sr') {
-    DSMscenario::regulated_watersheds$SPRING
-  } else {
-    DSMscenario::regulated_watersheds$FALL
-  }
-
   tribs_with_no_decay <-if (!is.null(no_decay_tribs)) {
-      !regulated_watersheds | (DSMscenario::watershed_groups > 7) | no_decay_tribs
+      !DSMscenario::regulated_watersheds | (DSMscenario::watershed_groups > 7) | no_decay_tribs
   } else {
-    !regulated_watersheds | (DSMscenario::watershed_groups > 7)
+    !DSMscenario::regulated_watersheds | (DSMscenario::watershed_groups > 7)
   }
 
   spawn_decay_amount[tribs_with_no_decay, ] <- 1
@@ -276,6 +275,25 @@ decay_amount_matrices <- function(spawn_years, rear_years, spawn_decay_rate,
 #'    for each action type. The matrix values are the number of units of effort applied
 #'    for that action type within a watershed for that year.
 #' @param scenario_df scenario dataframe
+#' @details
+#' The \code{scenario_df} is a dataframe with each row representing a scenario action.
+#' The dataframe must contain the following columns:
+#' \itemize{
+#'   \item \strong{watershed} - The name or index for a watershed, ex. "Upper Sacramento River" or 1
+#'   \item \strong{action} - The action taken represented by the code 1 - 5, ex: 3 to represent adding inchannel rearing
+#'   \item \strong{start_year} - The simulation year the action begins
+#'   \item \strong{end_year} - The simulation year the action ends
+#'   \item \strong{units_of_effort} - number of action units taken, ex: .5 or 1
+#' }
+#' @section Actions and Units of Effort:
+#' \itemize{
+#'   \item \strong{1} - Do nothing
+#'   \item \strong{2} - Add 1 acre of spawning habitat
+#'   \item \strong{3} - Add 2 acres of inchannel rearing habitat
+#'   \item \strong{4} - Add 3 acres of floodplain rearing habitat
+#'   \item \strong{5} - Increase rearing survival by 5\%
+#'
+#' }
 #' @export
 get_action_matrices <- function(scenario_df) {
 

@@ -41,17 +41,10 @@ usethis::use_data(rear_decay_rate, overwrite = TRUE)
 species <- list(FALL_RUN = "fr", WINTER_RUN = "wr", SPRING_RUN = "sr", STEELHEAD = "st", LATE_FALL_RUN = "lfr")
 usethis::use_data(species)
 
-regulated_watersheds_fall <- c(1,0,1,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,1,1,1,0,1,1,1,0,1,1,1,1,1)
-names(regulated_watersheds_fall) <- DSMscenario::watershed_labels
 
-regulated_watersheds_spring <- c(1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0)
-names(regulated_watersheds_spring) <- DSMscenario::watershed_labels
-
-regulated_watersheds <- list(FALL = regulated_watersheds_fall,
-                             LATE_FALL = regulated_watersheds_fall,
-                             WINTER = regulated_watersheds_fall,
-                             SPRING = regulated_watersheds_spring)
-
+regulated_watersheds <- c(1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,
+                          1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0)
+names(regulated_watersheds) <- DSMscenario::watershed_labels
 usethis::use_data(regulated_watersheds, overwrite = TRUE)
 
 grp <- read_csv('data-raw/Grouping.csv')
