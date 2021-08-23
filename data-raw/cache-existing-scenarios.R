@@ -1,6 +1,7 @@
 library(purrr)
 library(dplyr)
 library(readxl)
+library(DSMscenario)
 
 # scenarios 1 - 7 ----
 raw_scenarios <- read_excel("data-raw/scenarios.xlsx", sheet = "scenarios")
@@ -162,6 +163,7 @@ scenarios$NINE$spawn <- nine$spawn
 scenarios$NINE$inchannel <- nine$inchannel
 scenarios$NINE$floodplain <- nine$floodplain
 scenarios$NINE$survival <- nine$survival
+
 # scenario 10 ----
 selectedOptimalDecisions<-matrix(c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,
@@ -199,6 +201,7 @@ ten <- make_scenario(selectedOptimalDecisions)
 scenarios$TEN$spawn <- ten$spawn
 scenarios$TEN$inchannel <- ten$inchannel
 scenarios$TEN$floodplain <- ten$floodplain
+scenarios$TEN$floodplain["Upper-mid Sacramento River", ] <- scenarios$TEN$floodplain["Upper-mid Sacramento River", ] * 3
 scenarios$TEN$survival <- ten$survival
 # scenario 11 ----
 selectedOptimalDecisions<-matrix(c(3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
