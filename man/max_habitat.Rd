@@ -7,17 +7,9 @@
 \alias{max_rear_area}
 \title{Theoretical Maximum Habitat}
 \usage{
-max_spawn_area$FALL
-max_spawn_area$WINTER
-max_spawn_area$SPRING
-max_spawn_area$LATE_FALL
-max_spawn_area$STEELHEAD
+max_spawn_area
 
-max_rear_area$FALL
-max_rear_area$LATE_FALL
-max_rear_area$WINTER
-max_rear_area$SPRING
-max_rear_area$STEELHEAD
+max_rear_area
 }
 \description{
 A list for each species containing an ordered vector of the
@@ -30,5 +22,10 @@ For the purposes of scenario development, we assumed that existing maximum habit
 by a maximum of 100% over the twenty year simulation period. This reflects both
 feasibility of habitat restoration over twenty years as well as physical limitations
 (e.g. homes, levees, bridges, etc.) on habitat conditions.
+}
+\examples{
+# Subset by run to find max spawn and rear habitat area
+DSMscenario::max_spawn_area$FALL
+DSMscenario::max_rear_area$FALL
 }
 \keyword{datasets}

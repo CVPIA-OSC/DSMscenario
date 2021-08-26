@@ -8,11 +8,7 @@
 An object of class \code{list} of length 5.
 }
 \usage{
-DSMscenario::species$FALL_RUN
-DSMscenario::species$LATE_FALL_RUN
-DSMscenario::species$WINTER_RUN
-DSMscenario::species$SPRING_RUN
-DSMscenario::species$STEELHEAD
+species
 }
 \description{
 A helper list object for setting the species value when running \code{load_scenario}
@@ -39,8 +35,11 @@ scenario_df <- data.frame(watershed = c("Upper Sacramento River",
                                          1999, 1999, 1999),
                           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
 
-scenario <- load_scenario(scenario_df = scenario_df,
-                          species = DSMscenario::species$FALL_RUN,
-                          habitat_inputs = habitats)
+scenario <- load_scenario(scenario = DSMscenario::scenarios$ONE,
+                          habitat_inputs = habitats,
+                          species = DSMscenario::species$FALL,
+                          spawn_decay_rate = DSMscenario::spawn_decay_rate,
+                          rear_decay_rate = DSMscenario::rear_decay_rate,
+                          stochastic = TRUE)
 }
 \keyword{datasets}

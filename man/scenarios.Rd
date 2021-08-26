@@ -8,27 +8,22 @@
 An object of class \code{list} of length 14.
 }
 \usage{
-DSMscenario::scenarios$NO_ACTION
-DSMscenario::scenarios$ONE
-DSMscenario::scenarios$TWO
-DSMscenario::scenarios$THREE
-DSMscenario::scenarios$FOUR
-DSMscenario::scenarios$FIVE
-DSMscenario::scenarios$SIX
-DSMscenario::scenarios$SEVEN
-DSMscenario::scenarios$EIGHT
-DSMscenario::scenarios$NINE
-DSMscenario::scenarios$TEN
-DSMscenario::scenarios$ELEVEN
-DSMscenario::scenarios$TWELVE
-DSMscenario::scenarios$THIRTEEN
+scenarios
 }
 \description{
-CVPIA SIT's scenario dataframes for scenarios 1-7 and no action
+CVPIA SIT's scenario dataframes for scenarios 1-13 and no action
+}
+\details{
+Subset DSMscenario::scenarios to access scenario data for a predefined SIT strategy.
+View \href{https://flowwest.shinyapps.io/SIT-strategies/}{SIT-strategies}.
 }
 \examples{
+# Select a scenario
+scenario_one <- DSMscenario::scenarios$ONE
+
+# Use that scenario in the fall run model
 fall_run_seeds <- fallRunDSM::fall_run_model(mode = "seed")
-fallRunDSM::fall_run_model(scenario = DSMscenario::scenarios$ONE,
+fallRunDSM::fall_run_model(scenario = scenario_one,
                            mode = "simulate",
                            seeds = fall_run_seeds)
 }

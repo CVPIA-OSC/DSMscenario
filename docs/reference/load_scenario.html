@@ -88,7 +88,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/CVPIA-OSC/DSMscenario">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -187,7 +187,7 @@ desires to exclude a watershed from spawning and rearing habitat decay.</p>
 <span class='va'>scenario_custom</span> <span class='op'>&lt;-</span> <span class='fu'>load_scenario</span><span class='op'>(</span>scenario <span class='op'>=</span> <span class='va'>custom_scenario</span>,
                                  species <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'><a href='species.html'>species</a></span><span class='op'>$</span><span class='va'>FALL_RUN</span>,
                                  habitat_inputs <span class='op'>=</span> <span class='va'>habitats</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in decay_amount_matrices(spawn_years = dim(habitat_inputs$spawning_habitat)[3],     rear_years = dim(habitat_inputs$inchannel_habitat_fry)[3],     spawn_decay_rate = spawn_decay_rate, rear_decay_rate = rear_decay_rate,     species = species, no_decay_tribs = scenario$no_decay, stochastic = stochastic): object 'custom_scenario' not found</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='error'>Error in apply(amount_matrix * action_units, MARGIN = 1, cumsum): object 'custom_scenario' not found</span></div><div class='input'>
 <span class='va'>scenario_one</span> <span class='op'>&lt;-</span> <span class='fu'>load_scenario</span><span class='op'>(</span>scenario <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'><a href='scenarios.html'>scenarios</a></span><span class='op'>$</span><span class='va'>ONE</span>,
                               species <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'><a href='species.html'>species</a></span><span class='op'>$</span><span class='va'>FALL_RUN</span>,
                               habitat_inputs <span class='op'>=</span> <span class='va'>habitats</span><span class='op'>)</span>
