@@ -1,12 +1,17 @@
 library(purrr)
 library(dplyr)
 library(readxl)
+library(DSMscenario)
 
 # scenarios 1 - 7 ----
 raw_scenarios <- read_excel("data-raw/scenarios.xlsx", sheet = "scenarios")
 
 scenarios <- purrr::map(1:7, ~get_action_matrices(filter(raw_scenarios, scenario == .))) %>%
   purrr::set_names(toupper(c("one", "two", "three", "four", "five", "six", "seven")))
+
+no_decay_alt <- watershed_labels %in% c("Clear Creek", "Butte Creek", "Upper Sacramento River")
+names(no_decay_alt) <- watershed_labels
+scenarios$SIX$no_decay <- no_decay_alt
 
 # baseline scenario ----
 scenarios$NO_ACTION <- get_action_matrices(tibble::tibble(
@@ -158,6 +163,7 @@ scenarios$NINE$spawn <- nine$spawn
 scenarios$NINE$inchannel <- nine$inchannel
 scenarios$NINE$floodplain <- nine$floodplain
 scenarios$NINE$survival <- nine$survival
+
 # scenario 10 ----
 selectedOptimalDecisions<-matrix(c(NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,5,NA,NA,
@@ -195,6 +201,7 @@ ten <- make_scenario(selectedOptimalDecisions)
 scenarios$TEN$spawn <- ten$spawn
 scenarios$TEN$inchannel <- ten$inchannel
 scenarios$TEN$floodplain <- ten$floodplain
+scenarios$TEN$floodplain["Upper-mid Sacramento River", ] <- scenarios$TEN$floodplain["Upper-mid Sacramento River", ] * 3
 scenarios$TEN$survival <- ten$survival
 # scenario 11 ----
 selectedOptimalDecisions<-matrix(c(3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
@@ -260,10 +267,10 @@ selectedOptimalDecisions<-matrix(c(3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    3,3,3,3,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-                                   3,3,3,3,4,4,4,4,4,3,3,4,4,4,3,4,4,3,4,3,
+                                   4,3,3,3,4,3,3,4,3,4,3,4,4,3,4,4,4,3,4,3,
+                                   5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
-                                   5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
@@ -299,10 +306,10 @@ selectedOptimalDecisions<-matrix(c(3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    3,3,3,3,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
-                                   4,3,3,3,4,3,3,4,3,4,3,4,4,3,4,4,4,3,4,3,
-                                   5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+                                   3,3,3,3,4,4,4,4,4,3,3,4,4,4,3,4,4,3,4,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
+                                   5,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
                                    3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
                                    NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,
