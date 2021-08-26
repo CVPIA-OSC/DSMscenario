@@ -116,17 +116,9 @@ maximum possible suitable area for each watershed" />
 maximum possible suitable area for each watershed</p>
     </div>
 
-    <pre class="usage"><span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>FALL</span>
-<span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>WINTER</span>
-<span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>SPRING</span>
-<span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>LATE_FALL</span>
-<span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>STEELHEAD</span>
+    <pre class="usage"><span class='va'>max_spawn_area</span>
 
-<span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>FALL</span>
-<span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>LATE_FALL</span>
-<span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>WINTER</span>
-<span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>SPRING</span>
-<span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>STEELHEAD</span></pre>
+<span class='va'>max_rear_area</span></pre>
 
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -138,6 +130,73 @@ by a maximum of 100<!-- % over the twenty year simulation period. This reflects 
 feasibility of habitat restoration over twenty years as well as physical limitations
 (e.g. homes, levees, bridges, etc.) on habitat conditions.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># Subset by run to find max spawn and rear habitat area</span>
+<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>FALL</span>
+</div><div class='output co'>#&gt;     Upper Sacramento River             Antelope Creek 
+#&gt;                 541397.931                 123291.779 
+#&gt;               Battle Creek                 Bear Creek 
+#&gt;                   6815.051                  89034.974 
+#&gt;            Big Chico Creek                Butte Creek 
+#&gt;                  78367.408                  15007.990 
+#&gt;                Clear Creek           Cottonwood Creek 
+#&gt;                 101992.136                   7265.043 
+#&gt;                  Cow Creek                 Deer Creek 
+#&gt;                 408442.999                 193354.780 
+#&gt;                Elder Creek                 Mill Creek 
+#&gt;                  36958.952                 106149.647 
+#&gt;               Paynes Creek                Stony Creek 
+#&gt;                  61473.297                 135897.111 
+#&gt;               Thomes Creek Upper-mid Sacramento River 
+#&gt;                 195021.657                      0.000 
+#&gt;              Sutter Bypass                 Bear River 
+#&gt;                      0.000                 121201.151 
+#&gt;              Feather River                 Yuba River 
+#&gt;                 471825.938                 251529.370 
+#&gt; Lower-mid Sacramento River                Yolo Bypass 
+#&gt;                      0.000                      0.000 
+#&gt;             American River     Lower Sacramento River 
+#&gt;                2040494.872                      0.000 
+#&gt;            Calaveras River             Cosumnes River 
+#&gt;                  99942.916                 105369.628 
+#&gt;            Mokelumne River               Merced River 
+#&gt;                 112701.298                 343810.544 
+#&gt;           Stanislaus River             Tuolumne River 
+#&gt;                 256861.185                 384228.652 
+#&gt;          San Joaquin River 
+#&gt;                      0.000 </div><div class='input'><span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>FALL</span>
+</div><div class='output co'>#&gt;     Upper Sacramento River             Antelope Creek 
+#&gt;                  597320.75                  407094.78 
+#&gt;               Battle Creek                 Bear Creek 
+#&gt;                   79205.70                  222688.41 
+#&gt;            Big Chico Creek                Butte Creek 
+#&gt;                  193828.01                  353798.99 
+#&gt;                Clear Creek           Cottonwood Creek 
+#&gt;                   88289.18                  495279.74 
+#&gt;                  Cow Creek                 Deer Creek 
+#&gt;                 1137373.05                  659839.85 
+#&gt;                Elder Creek                 Mill Creek 
+#&gt;                   91422.49                  263123.45 
+#&gt;               Paynes Creek                Stony Creek 
+#&gt;                  152043.39                  336306.84 
+#&gt;               Thomes Creek Upper-mid Sacramento River 
+#&gt;                  482477.84                 1109100.15 
+#&gt;              Sutter Bypass                 Bear River 
+#&gt;                       0.00                  384798.62 
+#&gt;              Feather River                 Yuba River 
+#&gt;                 4513105.74                  138520.26 
+#&gt; Lower-mid Sacramento River                Yolo Bypass 
+#&gt;                  750518.49                       0.00 
+#&gt;             American River     Lower Sacramento River 
+#&gt;                 2484444.21                  145451.48 
+#&gt;            Calaveras River             Cosumnes River 
+#&gt;                  132958.38                  749048.98 
+#&gt;            Mokelumne River               Merced River 
+#&gt;                 1656337.76                 3060926.48 
+#&gt;           Stanislaus River             Tuolumne River 
+#&gt;                  142007.84                 2815094.91 
+#&gt;          San Joaquin River 
+#&gt;                 1376900.51 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

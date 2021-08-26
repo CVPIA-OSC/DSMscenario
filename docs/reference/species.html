@@ -114,11 +114,7 @@
     <p>A helper list object for setting the species value when running <code>load_scenario</code></p>
     </div>
 
-    <pre class="usage"><span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>FALL_RUN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>LATE_FALL_RUN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>WINTER_RUN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>SPRING_RUN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>STEELHEAD</span></pre>
+    <pre class="usage"><span class='va'>species</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
@@ -147,10 +143,13 @@
                                          <span class='fl'>1999</span>, <span class='fl'>1999</span>, <span class='fl'>1999</span><span class='op'>)</span>,
                           units_of_effort <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='va'>scenario</span> <span class='op'>&lt;-</span> <span class='fu'><a href='load_scenario.html'>load_scenario</a></span><span class='op'>(</span>scenario_df <span class='op'>=</span> <span class='va'>scenario_df</span>,
-                          species <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>FALL_RUN</span>,
-                          habitat_inputs <span class='op'>=</span> <span class='va'>habitats</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in load_scenario(scenario_df = scenario_df, species = DSMscenario::species$FALL_RUN,     habitat_inputs = habitats): unused argument (scenario_df = scenario_df)</span></div></pre>
+<span class='va'>scenario</span> <span class='op'>&lt;-</span> <span class='fu'><a href='load_scenario.html'>load_scenario</a></span><span class='op'>(</span>scenario <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'><a href='scenarios.html'>scenarios</a></span><span class='op'>$</span><span class='va'>ONE</span>,
+                          habitat_inputs <span class='op'>=</span> <span class='va'>habitats</span>,
+                          species <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>species</span><span class='op'>$</span><span class='va'>FALL</span>,
+                          spawn_decay_rate <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'><a href='decay_rate.html'>spawn_decay_rate</a></span>,
+                          rear_decay_rate <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'><a href='decay_rate.html'>rear_decay_rate</a></span>,
+                          stochastic <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

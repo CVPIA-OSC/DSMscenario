@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="SIT Scenarios — scenarios" />
-<meta property="og:description" content="CVPIA SIT's scenario dataframes for scenarios 1-7 and no action" />
+<meta property="og:description" content="CVPIA SIT's scenario dataframes for scenarios 1-13 and no action" />
 
 
 
@@ -111,32 +111,27 @@
     </div>
 
     <div class="ref-description">
-    <p>CVPIA SIT's scenario dataframes for scenarios 1-7 and no action</p>
+    <p>CVPIA SIT's scenario dataframes for scenarios 1-13 and no action</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>NO_ACTION</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>ONE</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>TWO</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>THREE</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>FOUR</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>FIVE</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>SIX</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>SEVEN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>EIGHT</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>NINE</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>TEN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>ELEVEN</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>TWELVE</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>THIRTEEN</span></pre>
+    <pre class="usage"><span class='va'>scenarios</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
     <p>An object of class <code>list</code> of length 14.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Subset DSMscenario::scenarios to access scenario data for a predefined SIT strategy.
+View <a href='https://flowwest.shinyapps.io/SIT-strategies/'>SIT-strategies</a>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>fall_run_seeds</span> <span class='op'>&lt;-</span> <span class='fu'>fallRunDSM</span><span class='fu'>::</span><span class='fu'><a href='https://CVPIA-OSC.github.io/fallRunDSM//reference/fall_run_model.html'>fall_run_model</a></span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"seed"</span><span class='op'>)</span>
-<span class='fu'>fallRunDSM</span><span class='fu'>::</span><span class='fu'><a href='https://CVPIA-OSC.github.io/fallRunDSM//reference/fall_run_model.html'>fall_run_model</a></span><span class='op'>(</span>scenario <span class='op'>=</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>ONE</span>,
+    <pre class="examples"><div class='input'><span class='co'># Select a scenario</span>
+<span class='va'>scenario_one</span> <span class='op'>&lt;-</span> <span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>scenarios</span><span class='op'>$</span><span class='va'>ONE</span>
+
+<span class='co'># Use that scenario in the fall run model</span>
+<span class='va'>fall_run_seeds</span> <span class='op'>&lt;-</span> <span class='fu'>fallRunDSM</span><span class='fu'>::</span><span class='fu'><a href='https://CVPIA-OSC.github.io/fallRunDSM//reference/fall_run_model.html'>fall_run_model</a></span><span class='op'>(</span>mode <span class='op'>=</span> <span class='st'>"seed"</span><span class='op'>)</span>
+<span class='fu'>fallRunDSM</span><span class='fu'>::</span><span class='fu'><a href='https://CVPIA-OSC.github.io/fallRunDSM//reference/fall_run_model.html'>fall_run_model</a></span><span class='op'>(</span>scenario <span class='op'>=</span> <span class='va'>scenario_one</span>,
                            mode <span class='op'>=</span> <span class='st'>"simulate"</span>,
                            seeds <span class='op'>=</span> <span class='va'>fall_run_seeds</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $spawners

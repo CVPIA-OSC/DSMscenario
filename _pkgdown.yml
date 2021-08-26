@@ -27,6 +27,7 @@ reference:
   - rear_decay_rate
   - scenarios
   - spawn_decay_rate
+  - species
   - watershed_groups
   - watershed_labels
 

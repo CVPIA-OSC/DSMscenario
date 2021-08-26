@@ -7,7 +7,7 @@
 #' Decay Rates
 #' @description An ordered vector of minimum decay rate for each watershed
 #' @name decay_rate
-NULL
+
 
 #' @rdname decay_rate
 #' @format NULL
@@ -18,31 +18,22 @@ NULL
 "rear_decay_rate"
 
 #' SIT Scenarios
-#' @description CVPIA SIT's scenario dataframes for scenarios 1-7 and no action
-#' @usage
-#' DSMscenario::scenarios$NO_ACTION
-#' DSMscenario::scenarios$ONE
-#' DSMscenario::scenarios$TWO
-#' DSMscenario::scenarios$THREE
-#' DSMscenario::scenarios$FOUR
-#' DSMscenario::scenarios$FIVE
-#' DSMscenario::scenarios$SIX
-#' DSMscenario::scenarios$SEVEN
-#' DSMscenario::scenarios$EIGHT
-#' DSMscenario::scenarios$NINE
-#' DSMscenario::scenarios$TEN
-#' DSMscenario::scenarios$ELEVEN
-#' DSMscenario::scenarios$TWELVE
-#' DSMscenario::scenarios$THIRTEEN
+#' @description CVPIA SIT's scenario dataframes for scenarios 1-13 and no action
+#' @details Subset DSMscenario::scenarios to access scenario data for a predefined SIT strategy.
+#' View \href{https://flowwest.shinyapps.io/SIT-strategies/}{SIT-strategies}.
 #' @examples
+#' # Select a scenario
+#' scenario_one <- DSMscenario::scenarios$ONE
+#'
+#' # Use that scenario in the fall run model
 #' fall_run_seeds <- fallRunDSM::fall_run_model(mode = "seed")
-#' fallRunDSM::fall_run_model(scenario = DSMscenario::scenarios$ONE,
+#' fallRunDSM::fall_run_model(scenario = scenario_one,
 #'                            mode = "simulate",
 #'                            seeds = fall_run_seeds)
 "scenarios"
 
 #' SIT Watershed Groupings
-#' @description CVPIA SIT's watershed groupings
+#' @description SIT defined watershed diversity groups developed from the Central Valley Chinook Salmon and Steelhead Recovery Plan \href{https://archive.fisheries.noaa.gov/wcr/publications/recovery_planning/salmon_steelhead/domains/california_central_valley/cv_chin_stlhd_r_plan_fs_071614.pdf}{NOAA 2014}
 "watershed_groups"
 
 #' Regulated Watersheds
@@ -52,12 +43,6 @@ NULL
 
 #' Species
 #' @description A helper list object for setting the species value when running \code{load_scenario}
-#' @usage
-#' DSMscenario::species$FALL_RUN
-#' DSMscenario::species$LATE_FALL_RUN
-#' DSMscenario::species$WINTER_RUN
-#' DSMscenario::species$SPRING_RUN
-#' DSMscenario::species$STEELHEAD
 #' @examples
 #' habitats <- list(
 #'   spawning_habitat = fallRunDSM::params$spawning_habitat,
@@ -80,9 +65,12 @@ NULL
 #'                                          1999, 1999, 1999),
 #'                           units_of_effort = c(2, 1, 1, 1, 1, 1, 1, 1, 1))
 #'
-#' scenario <- load_scenario(scenario_df = scenario_df,
-#'                           species = DSMscenario::species$FALL_RUN,
-#'                           habitat_inputs = habitats)
+#' scenario <- load_scenario(scenario = DSMscenario::scenarios$ONE,
+#'                           habitat_inputs = habitats,
+#'                           species = DSMscenario::species$FALL,
+#'                           spawn_decay_rate = DSMscenario::spawn_decay_rate,
+#'                           rear_decay_rate = DSMscenario::rear_decay_rate,
+#'                           stochastic = TRUE)
 "species"
 
 #' Theoretical Maximum Habitat
@@ -94,25 +82,17 @@ NULL
 #' by a maximum of 100% over the twenty year simulation period. This reflects both
 #' feasibility of habitat restoration over twenty years as well as physical limitations
 #' (e.g. homes, levees, bridges, etc.) on habitat conditions.
+#' @examples
+#' # Subset by run to find max spawn and rear habitat area
+#' DSMscenario::max_spawn_area$FALL
+#' DSMscenario::max_rear_area$FALL
 #' @name max_habitat
 NULL
 
 #' @rdname max_habitat
 #' @format NULL
-#' @usage
-#' max_spawn_area$FALL
-#' max_spawn_area$WINTER
-#' max_spawn_area$SPRING
-#' max_spawn_area$LATE_FALL
-#' max_spawn_area$STEELHEAD
 "max_spawn_area"
 
 #' @rdname max_habitat
 #' @format NULL
-#' @usage
-#' max_rear_area$FALL
-#' max_rear_area$LATE_FALL
-#' max_rear_area$WINTER
-#' max_rear_area$SPRING
-#' max_rear_area$STEELHEAD
 "max_rear_area"
