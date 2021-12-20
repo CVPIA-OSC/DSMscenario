@@ -21,7 +21,7 @@
 #' A scenario can also include a boolean vector named \code{no_decay} if the user
 #' desires to exclude a watershed from spawning and rearing habitat decay.
 #' @examples
-#' scenario_df <- tibble(watershed = "Lower Sacramento River",
+#' scenario_df <- dplyr::tibble(watershed = "Lower Sacramento River",
 #'                       action = 3,
 #'                       start_year = 1980,
 #'                       end_year = 1999,
