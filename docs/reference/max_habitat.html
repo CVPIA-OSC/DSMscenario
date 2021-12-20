@@ -89,7 +89,7 @@ maximum possible suitable area for each watershed" />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/CVPIA-OSC/DSMscenario">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -131,72 +131,74 @@ feasibility of habitat restoration over twenty years as well as physical limitat
 (e.g. homes, levees, bridges, etc.) on habitat conditions.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Subset by run to find max spawn and rear habitat area</span>
-<span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>FALL</span>
-</div><div class='output co'>#&gt;     Upper Sacramento River             Antelope Creek 
-#&gt;                 541397.931                 123291.779 
-#&gt;               Battle Creek                 Bear Creek 
-#&gt;                   6815.051                  89034.974 
-#&gt;            Big Chico Creek                Butte Creek 
-#&gt;                  78367.408                  15007.990 
-#&gt;                Clear Creek           Cottonwood Creek 
-#&gt;                 101992.136                   7265.043 
-#&gt;                  Cow Creek                 Deer Creek 
-#&gt;                 408442.999                 193354.780 
-#&gt;                Elder Creek                 Mill Creek 
-#&gt;                  36958.952                 106149.647 
-#&gt;               Paynes Creek                Stony Creek 
-#&gt;                  61473.297                 135897.111 
-#&gt;               Thomes Creek Upper-mid Sacramento River 
-#&gt;                 195021.657                      0.000 
-#&gt;              Sutter Bypass                 Bear River 
-#&gt;                      0.000                 121201.151 
-#&gt;              Feather River                 Yuba River 
-#&gt;                 471825.938                 251529.370 
-#&gt; Lower-mid Sacramento River                Yolo Bypass 
-#&gt;                      0.000                      0.000 
-#&gt;             American River     Lower Sacramento River 
-#&gt;                2040494.872                      0.000 
-#&gt;            Calaveras River             Cosumnes River 
-#&gt;                  99942.916                 105369.628 
-#&gt;            Mokelumne River               Merced River 
-#&gt;                 112701.298                 343810.544 
-#&gt;           Stanislaus River             Tuolumne River 
-#&gt;                 256861.185                 384228.652 
-#&gt;          San Joaquin River 
-#&gt;                      0.000 </div><div class='input'><span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>FALL</span>
-</div><div class='output co'>#&gt;     Upper Sacramento River             Antelope Creek 
-#&gt;                  597320.75                  407094.78 
-#&gt;               Battle Creek                 Bear Creek 
-#&gt;                   79205.70                  222688.41 
-#&gt;            Big Chico Creek                Butte Creek 
-#&gt;                  193828.01                  353798.99 
-#&gt;                Clear Creek           Cottonwood Creek 
-#&gt;                   88289.18                  495279.74 
-#&gt;                  Cow Creek                 Deer Creek 
-#&gt;                 1137373.05                  659839.85 
-#&gt;                Elder Creek                 Mill Creek 
-#&gt;                   91422.49                  263123.45 
-#&gt;               Paynes Creek                Stony Creek 
-#&gt;                  152043.39                  336306.84 
-#&gt;               Thomes Creek Upper-mid Sacramento River 
-#&gt;                  482477.84                 1109100.15 
-#&gt;              Sutter Bypass                 Bear River 
-#&gt;                       0.00                  384798.62 
-#&gt;              Feather River                 Yuba River 
-#&gt;                 4513105.74                  138520.26 
-#&gt; Lower-mid Sacramento River                Yolo Bypass 
-#&gt;                  750518.49                       0.00 
-#&gt;             American River     Lower Sacramento River 
-#&gt;                 2484444.21                  145451.48 
-#&gt;            Calaveras River             Cosumnes River 
-#&gt;                  132958.38                  749048.98 
-#&gt;            Mokelumne River               Merced River 
-#&gt;                 1656337.76                 3060926.48 
-#&gt;           Stanislaus River             Tuolumne River 
-#&gt;                  142007.84                 2815094.91 
-#&gt;          San Joaquin River 
-#&gt;                 1376900.51 </div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Subset by run to find max spawn and rear habitat area</span></span>
+<span class='r-in'><span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>max_spawn_area</span><span class='op'>$</span><span class='va'>FALL</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     Upper Sacramento River             Antelope Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 541397.931                 123291.779 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Battle Creek                 Bear Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   6815.051                  89034.974 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Big Chico Creek                Butte Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  78367.408                  15007.990 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                Clear Creek           Cottonwood Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 101992.136                   7265.043 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  Cow Creek                 Deer Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 408442.999                 193354.780 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                Elder Creek                 Mill Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  36958.952                 106149.647 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Paynes Creek                Stony Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  61473.297                 135897.111 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Thomes Creek Upper-mid Sacramento River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 195021.657                      0.000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              Sutter Bypass                 Bear River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                      0.000                 121201.151 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              Feather River                 Yuba River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 471825.938                 251529.370 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Lower-mid Sacramento River                Yolo Bypass </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                      0.000                      0.000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             American River     Lower Sacramento River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                2040494.872                      0.000 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Calaveras River             Cosumnes River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  99942.916                 105369.628 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Mokelumne River               Merced River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 112701.298                 343810.544 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           Stanislaus River             Tuolumne River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 256861.185                 384228.652 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          San Joaquin River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                      0.000 </span>
+<span class='r-in'><span class='fu'>DSMscenario</span><span class='fu'>::</span><span class='va'>max_rear_area</span><span class='op'>$</span><span class='va'>FALL</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     Upper Sacramento River             Antelope Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  597320.75                  407094.78 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Battle Creek                 Bear Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   79205.70                  222688.41 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Big Chico Creek                Butte Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  193828.01                  353798.99 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                Clear Creek           Cottonwood Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   88289.18                  495279.74 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  Cow Creek                 Deer Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 1137373.05                  659839.85 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                Elder Creek                 Mill Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                   91422.49                  263123.45 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Paynes Creek                Stony Creek </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  152043.39                  336306.84 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               Thomes Creek Upper-mid Sacramento River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  482477.84                 1109100.15 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              Sutter Bypass                 Bear River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                       0.00                  384798.62 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              Feather River                 Yuba River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 4513105.74                  138520.26 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Lower-mid Sacramento River                Yolo Bypass </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  750518.49                       0.00 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             American River     Lower Sacramento River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 2484444.21                  145451.48 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Calaveras River             Cosumnes River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  132958.38                  749048.98 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            Mokelumne River               Merced River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 1656337.76                 3060926.48 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>           Stanislaus River             Tuolumne River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                  142007.84                 2815094.91 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          San Joaquin River </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>                 1376900.51 </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
