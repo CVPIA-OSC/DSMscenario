@@ -80,12 +80,22 @@ load_scenario <- function(scenario, habitat_inputs,
                                  no_decay_tribs = scenario$no_decay,
                                  stochastic = stochastic)
 
-  spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
-                                     action_units = scenario$spawn,
-                                     amount = one_acre,
-                                     decay = decay$spawn,
-                                     theoretical_max = spawn_theoretical_habitat_max,
-                                     stochastic = stochastic)
+  # FIXME(refactor) thinking this could be done more elegantly, or we can leave as is until we figure out the spring and winter run spawning decay rates
+  if (species == "fr") {
+    spawning_habitat <- modify_spawning_habitat(habitat = habitat_inputs$spawning_habitat,
+                                                action_units = scenario$spawn,
+                                                amount = one_acre,
+                                                stochastic = stochastic,
+                                                theoretical_max = spawn_theoretical_habitat_max)
+  } else {
+    spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
+                                       action_units = scenario$spawn,
+                                       amount = one_acre,
+                                       decay = decay$spawn,
+                                       theoretical_max = spawn_theoretical_habitat_max,
+                                       stochastic = stochastic)
+  }
+
 
   inchannel_habitat_fry <- modify_habitat(habitat = habitat_inputs$inchannel_habitat_fry,
                                           action_units = scenario$inchannel,
@@ -123,6 +133,40 @@ load_scenario <- function(scenario, habitat_inputs,
 #' @noRd
 modify_survival <- function(action_units) {
   (action_units * .05) + 1
+}
+
+#' Modify Spawning Habitat
+#' TODO can decay be passed in as argument? for sensitivity analysis
+#' @export
+modify_spawning_habitat <- function(habitat, action_units, amount, theoretical_max, stochastic) {
+
+  years <- dim(habitat)[3]
+
+  if (stochastic) {
+    amounts <- add_parital_controllability(amount, 31*years)
+  } else {
+    amounts <- rep(amount, 31*years)
+  }
+
+  amount_matrix <- matrix(amounts, nrow = 31)
+
+  cumulative_amount_matrix <- t(apply(amount_matrix*action_units, MARGIN = 1, cumsum))
+
+  # for each month within a year, add or degrade same volume of habitat
+  for (i in 1:12) {
+    # add habitat by number of units
+    habitat[ , i, ] <- habitat[ , i, ] + cumulative_amount_matrix
+  }
+
+  for (i in 1:31) {
+    habitat[i,,] <- habitat[i,,] * DSMhabitat::spawning_decay_multiplier[[i]]
+  }
+
+  # Do not let habitat amount exceed theoretical habitat maximum for spawn and inchannel rearing
+  habitat <- pmin(habitat, theoretical_max)
+
+
+  return(habitat)
 }
 
 #' Modify Inchannel Habitat
