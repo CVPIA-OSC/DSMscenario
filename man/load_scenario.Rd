@@ -10,6 +10,7 @@ load_scenario(
   species = c("fr", "wr", "sr", "st", "lfr"),
   spawn_decay_rate = DSMscenario::spawn_decay_rate,
   rear_decay_rate = DSMscenario::rear_decay_rate,
+  spawn_decay_multiplier = NULL,
   stochastic = TRUE
 )
 }
