@@ -51,6 +51,7 @@ load_scenario <- function(scenario, habitat_inputs,
                           species = c("fr", "wr", "sr", "st", "lfr"),
                           spawn_decay_rate = DSMscenario::spawn_decay_rate,
                           rear_decay_rate = DSMscenario::rear_decay_rate,
+                          spawn_decay_multiplier = NULL,
                           stochastic = TRUE) {
 
   species <- match.arg(species)
@@ -81,12 +82,14 @@ load_scenario <- function(scenario, habitat_inputs,
                                  stochastic = stochastic)
 
   # FIXME(refactor) thinking this could be done more elegantly, or we can leave as is until we figure out the spring and winter run spawning decay rates
-  if (species == "fr") {
+  # Currently we only have the new spawning decay values for fall run
+  if (species == "fr" && !is.null(spawn_decay_multiplier)) {
     spawning_habitat <- modify_spawning_habitat(habitat = habitat_inputs$spawning_habitat,
                                                 action_units = scenario$spawn,
                                                 amount = one_acre,
                                                 stochastic = stochastic,
-                                                theoretical_max = spawn_theoretical_habitat_max)
+                                                theoretical_max = spawn_theoretical_habitat_max,
+                                                decay_multipliers = spawn_decay_multiplier)
   } else {
     spawning_habitat <- modify_habitat(habitat = habitat_inputs$spawning_habitat,
                                        action_units = scenario$spawn,
@@ -138,7 +141,8 @@ modify_survival <- function(action_units) {
 #' Modify Spawning Habitat
 #' TODO can decay be passed in as argument? for sensitivity analysis
 #' @export
-modify_spawning_habitat <- function(habitat, action_units, amount, theoretical_max, stochastic) {
+modify_spawning_habitat <- function(habitat, action_units, amount, theoretical_max, stochastic,
+                                    decay_multipliers) {
 
   years <- dim(habitat)[3]
 
@@ -159,7 +163,7 @@ modify_spawning_habitat <- function(habitat, action_units, amount, theoretical_m
   }
 
   for (i in 1:31) {
-    habitat[i,,] <- habitat[i,,] * DSMhabitat::spawning_decay_multiplier[[i]]
+    habitat[i,,] <- habitat[i,,] * decay_multipliers[i,,]
   }
 
   # Do not let habitat amount exceed theoretical habitat maximum for spawn and inchannel rearing

@@ -11,6 +11,9 @@ watershed_labels <- c("Upper Sacramento River", "Antelope Creek", "Battle Creek"
                       "Tuolumne River", "San Joaquin River")
 usethis::use_data(watershed_labels)
 
+spawning_decay_multiplier <- DSMhabitat::spawning_decay_multiplier
+usethis::use_data(spawning_decay_multiplier, overwrite = TRUE)
+
 max_decay_rates <- read_csv('data-raw/Grouping.csv') %>%
   mutate(
     spawn_decay_rate_max = case_when(
