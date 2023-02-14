@@ -83,7 +83,7 @@ load_scenario <- function(scenario, habitat_inputs,
 
   # FIXME(refactor) thinking this could be done more elegantly, or we can leave as is until we figure out the spring and winter run spawning decay rates
   # Currently we only have the new spawning decay values for fall run
-  if (species == "fr" && !is.null(spawn_decay_multiplier)) {
+  if (!is.null(spawn_decay_multiplier)) {
     spawning_habitat <- modify_spawning_habitat(habitat = habitat_inputs$spawning_habitat,
                                                 action_units = scenario$spawn,
                                                 amount = one_acre,
